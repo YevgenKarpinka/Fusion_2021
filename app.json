@@ -1,0 +1,26 @@
+{
+  "id": "6317e880-5065-4f48-98ff-ff40f914c170",
+  "name": "Fusion_v16",
+  "publisher": "TComTech",
+  "version": "1.0.0.0",
+  "brief": "",
+  "description": "",
+  "privacyStatement": "",
+  "EULA": "",
+  "help": "",
+  "url": "",
+  "logo": "",
+  "dependencies": [ ],
+  "screenshots": [],
+  "platform": "17.0.0.0",
+  "application": "17.0.0.0",
+  "idRanges": [
+    {
+      "from": 50000,
+      "to": 50149
+    }
+  ],
+  "contextSensitiveHelpUrl": "https://Fusion_v16.com/help/",
+  "showMyCode": true,
+  "runtime": "6.0"
+}
