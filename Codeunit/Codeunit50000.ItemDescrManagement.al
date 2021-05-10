@@ -18,10 +18,10 @@ codeunit 50000 "Item Descr. Management"
     var
         _OutStream: OutStream;
     begin
-        Clear(ExcelBuffer."Cell Value as Blob");
+        Clear(ExcelBuffer."Cell Value Blob");
         if StrLen(Value) <= MaxStrLen(ExcelBuffer."Cell Value as Text") then exit;
 
-        ExcelBuffer."Cell Value as Blob".CreateOutStream(_OutStream, TextEncoding::UTF8);
+        ExcelBuffer."Cell Value Blob".CreateOutStream(_OutStream, TextEncoding::UTF8);
         _OutStream.WriteText(Value);
         isHandled := true;
     end;
@@ -274,11 +274,11 @@ codeunit 50000 "Item Descr. Management"
         CR: Text[1];
     begin
         if not ExcelBuffer.Get(RowNo, ColNo) then exit('');
-        if not ExcelBuffer."Cell Value as Blob".HasValue then exit(ExcelBuffer."Cell Value as Text");
+        if not ExcelBuffer."Cell Value Blob".HasValue then exit(ExcelBuffer."Cell Value as Text");
 
-        ExcelBuffer.CALCFIELDS("Cell Value as Blob");
+        ExcelBuffer.CALCFIELDS("Cell Value Blob");
         CR[1] := 10;
-        ExcelBuffer."Cell Value as Blob".CreateInStream(_InStream, TextEncoding::UTF8);
+        ExcelBuffer."Cell Value Blob".CreateInStream(_InStream, TextEncoding::UTF8);
         EXIT(TypeHelper.ReadAsTextWithSeparator(_InStream, CR));
     end;
 

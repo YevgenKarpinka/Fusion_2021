@@ -494,7 +494,7 @@ page 50010 "APIV2 - Sales Orders"
         GraphMgtSalesOrder: Codeunit "Graph Mgt - Sales Order";
     begin
         BillingPostalAddressJSONText := GraphMgtSalesOrder.BillToCustomerAddressToJSON(Rec);
-        CurrencyCodeTxt := GraphMgtGeneralTools.TranslateNAVCurrencyCodeToCurrencyCode(LCYCurrencyCode, "Currency Code");
+        CurrencyCodeTxt := GraphMgtGeneralTools.TranslateNAVCurrencyCodeToCurrencyCode(LCYCurrencyCode, Rec."Currency Code");
         PartialShipping := (Rec."Shipping Advice" = Rec."Shipping Advice"::Partial);
     end;
 
