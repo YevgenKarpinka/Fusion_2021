@@ -105,6 +105,62 @@ codeunit 50001 "ShipStation Mgt."
         testMode := _testMode;
     end;
 
+    procedure Connect2eShopExt(SPCode: Code[20]; Body2Request: Text; newURL: Text; var IsSuccessStatusCode: Boolean): Text
+    var
+        SourceParameters: Record "Source Parameters";
+        RequestMessage: HttpRequestMessage;
+        ResponseMessage: HttpResponseMessage;
+        Headers: HttpHeaders;
+        Content: HttpContent;
+        Client: HttpClient;
+        responseText: Text;
+        // Autorization: Text;
+        // jsonLogin: JsonObject;
+        txtBuilder: TextBuilder;
+        xNonce: Text;
+        lblBoundary: Label '123456789';
+        lblContentDisposition: Label 'Content-Disposition: form-data; email="%1"; password="%2"';
+    begin
+        SourceParameters.Get(SPCode);
+        xNonce := newURL;
+        newURL := SourceParameters."FSp URL";
+
+        if SourceParameters."FSp RestMethod" = SourceParameters."FSp RestMethod"::POST then begin
+            if SPCode = 'LOGIN2ESHOP' then begin
+                // Autorization := StrSubstNo('%1=%2&%3=%4', 'email', SourceParameters."FSp UserName", 'password', SourceParameters."FSp Password");
+                // Body2Request := Autorization;
+                // jsonLogin.Add('email', SourceParameters."FSp UserName");
+                // jsonLogin.Add('password', SourceParameters."FSp Password");
+                // jsonLogin.WriteTo(Body2Request);
+                txtBuilder.AppendLine(StrSubstNo('--%1', lblBoundary));
+                txtBuilder.AppendLine(StrSubstNo(lblContentDisposition, SourceParameters."FSp UserName", SourceParameters."FSp Password"));
+                txtBuilder.AppendLine(StrSubstNo('--%1--', lblBoundary));
+            end;
+            Content.WriteFrom(txtBuilder.ToText());
+            Content.GetHeaders(Headers);
+            if Headers.Contains('Content-Type') then Headers.Remove('Content-Type');
+            Headers.Add('Content-Type', StrSubstNo(Format(SourceParameters."FSp ContentType"), lblBoundary));
+            Headers.Add('X-Nonce', xNonce);
+        end;
+
+        RequestMessage.SetRequestUri(newURL);
+        RequestMessage.Method := Format(SourceParameters."FSp RestMethod");
+        RequestMessage.GetHeaders(Headers);
+        if Headers.Contains('Content-Type') then Headers.Remove('Content-Type');
+        Headers.Add('Content-Type', Format(SourceParameters."FSp ContentType"));
+        RequestMessage.Content(Content);
+
+        Client.Send(RequestMessage, ResponseMessage);
+        ResponseMessage.Content.ReadAs(responseText);
+        IsSuccessStatusCode := ResponseMessage.IsSuccessStatusCode();
+
+        // Insert Operation to Log
+        InsertOperationToLog('ESHOP', Format(SourceParameters."FSp RestMethod"), newURL, '', Body2Request, responseText, IsSuccessStatusCode);
+
+        // exit(responseText);
+        exit(GetNonceFromResponce(SPCode, responseText));
+    end;
+
     procedure Connect2eShop(SPCode: Code[20]; Body2Request: Text; newURL: Text; var IsSuccessStatusCode: Boolean): Text
     var
         SourceParameters: Record "Source Parameters";
@@ -113,34 +169,30 @@ codeunit 50001 "ShipStation Mgt."
         Headers: HttpHeaders;
         Client: HttpClient;
         responseText: Text;
-        Autorization: Text;
         jsonLogin: JsonObject;
+        xNonce: Text;
     begin
         SourceParameters.Get(SPCode);
-
-        RequestMessage.Method := Format(SourceParameters."FSp RestMethod");
-        if newURL = '' then
-            newURL := SourceParameters."FSp URL"
-        else
-            newURL := StrSubstNo('%1%2', SourceParameters."FSp URL", newURL);
-
-        RequestMessage.SetRequestUri(newURL);
-        RequestMessage.GetHeaders(Headers);
+        xNonce := newURL;
+        newURL := SourceParameters."FSp URL";
 
         if SourceParameters."FSp RestMethod" = SourceParameters."FSp RestMethod"::POST then begin
             if SPCode = 'LOGIN2ESHOP' then begin
-                // Autorization := StrSubstNo('%1=%2&%3=%4', 'email', SourceParameters."FSp UserName", 'password', SourceParameters."FSp Password");
-                // Body2Request := Autorization;
                 jsonLogin.Add('email', SourceParameters."FSp UserName");
                 jsonLogin.Add('password', SourceParameters."FSp Password");
                 jsonLogin.WriteTo(Body2Request);
             end;
             RequestMessage.Content.WriteFrom(Body2Request);
             RequestMessage.Content.GetHeaders(Headers);
-            if SourceParameters."FSp ContentType" <> 0 then begin
-                Headers.Remove('Content-Type');
-                Headers.Add('Content-Type', Format(SourceParameters."FSp ContentType"));
-            end;
+            if Headers.Contains('Content-Type') then Headers.Remove('Content-Type');
+            Headers.Add('Content-Type', Format(SourceParameters."FSp ContentType"));
+        end;
+
+        RequestMessage.SetRequestUri(newURL);
+        RequestMessage.Method := Format(SourceParameters."FSp RestMethod");
+        if xNonce <> '' then begin
+            RequestMessage.GetHeaders(Headers);
+            Headers.Add('X-Nonce', xNonce);
         end;
 
         Client.Send(RequestMessage, ResponseMessage);
@@ -148,9 +200,29 @@ codeunit 50001 "ShipStation Mgt."
         IsSuccessStatusCode := ResponseMessage.IsSuccessStatusCode();
 
         // Insert Operation to Log
-        InsertOperationToLog('ESHOP', Format(SourceParameters."FSp RestMethod"), newURL, Autorization, Body2Request, responseText, IsSuccessStatusCode);
+        InsertOperationToLog('ESHOP', Format(SourceParameters."FSp RestMethod"), newURL, '', Body2Request, responseText, IsSuccessStatusCode);
 
-        exit(responseText);
+        exit(GetNonceFromResponce(SPCode, responseText));
+    end;
+
+    local procedure GetNonceFromResponce(spCode: Code[20]; txtResponse: Text) txtNonce: Text
+    var
+        getToken: Label 'GETTOKEN';
+        postLogin: Label 'LOGIN2ESHOP';
+        jsonObj: JsonObject;
+    begin
+        jsonObj.ReadFrom(txtResponse);
+        case SPCode of
+            getToken:
+                begin
+                    txtNonce := GetJSToken(jsonObj, 'nonce').AsValue().AsText();
+                end;
+            postLogin:
+                begin
+                    txtNonce := GetJSToken(jsonObj, 'token').AsValue().AsText();
+                end;
+        end;
+
     end;
 
     procedure Connector2eShop(Body2Request: Text; var IsSuccessStatusCode: Boolean; var responseText: Text; SPCode: Code[20])
@@ -212,7 +284,7 @@ codeunit 50001 "ShipStation Mgt."
         if SourceParameters."FSp RestMethod" = SourceParameters."FSp RestMethod"::POST then begin
             RequestMessage.Content.WriteFrom(Body2Request);
             RequestMessage.Content.GetHeaders(Headers);
-            if SourceParameters."FSp ContentType" <> 0 then begin
+            if SourceParameters."FSp ContentType".AsInteger() <> 0 then begin
                 Headers.Remove('Content-Type');
                 Headers.Add('Content-Type', Format(SourceParameters."FSp ContentType"));
             end;

@@ -91,6 +91,20 @@ pageextension 50009 "Item List Ext." extends "Item List"
                         Rec.SetRange("No.");
                     end;
                 }
+                action(TransferItemsToSite)
+                {
+                    ApplicationArea = All;
+                    CaptionML = ENU = 'Transfer Items To Site', RUS = 'Переслать товары на сайт';
+                    Image = ShowInventoryPeriods;
+
+                    trigger OnAction()
+                    var
+                    begin
+                        if not Codeunit.Run(Codeunit::"Transfer Items To Site Mgt") then
+                            Error(GetLastErrorText());
+                        Message('Transfered Ok!');
+                    end;
+                }
                 action(Send)
                 {
                     ApplicationArea = All;

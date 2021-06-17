@@ -103,4 +103,11 @@ tableextension 50001 "Item Ext." extends Item
             DecimalPlaces = 0 : 2;
         }
     }
+
+    // fieldgroups
+    // {
+    //     addlast(DropDown; "Manufacturer Code", "Brand Code")
+    //     {
+    //     }
+    // }
 }

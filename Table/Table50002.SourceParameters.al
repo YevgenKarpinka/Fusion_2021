@@ -54,12 +54,10 @@ table 50002 "Source Parameters"
             CaptionML = ENU = 'FSp Password', RUS = 'FSp Password';
             NotBlank = true;
         }
-        field(9; "FSp ContentType"; Option)
+        field(9; "FSp ContentType"; Enum ContentType)
         {
             DataClassification = CustomerContent;
             CaptionML = ENU = 'FSp ContentType', RUS = 'FSp ContentType';
-            OptionMembers = " ","application/json","application/x-www-form-urlencoded";
-            OptionCaptionML = ENU = ' ,application/json,application/x-www-form-urlencoded', RUS = ' ,application/json,application/x-www-form-urlencoded';
         }
         field(10; "FSp ETag"; Text[100])
         {
@@ -86,5 +84,27 @@ table 50002 "Source Parameters"
         {
             Clustered = true;
         }
+    }
+}
+
+enum 50000 ContentType
+{
+    Extensible = true;
+
+    value(0; " ")
+    {
+        // CaptionML = ENU = ' ';
+    }
+    value(1; "application/json")
+    {
+        // CaptionML = ENU = 'application/json';
+    }
+    value(2; "application/x-www-form-urlencoded")
+    {
+        // CaptionML = ENU = 'application/x-www-form-urlencoded';
+    }
+    value(3; "multipart/form-data;boundary=%1")
+    {
+        // CaptionML = ENU = 'multipart/form-data';
     }
 }
