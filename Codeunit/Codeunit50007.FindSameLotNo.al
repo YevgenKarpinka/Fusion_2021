@@ -22,17 +22,31 @@ codeunit 50007 "Find Same Lot No"
         end;
     end;
 
-    [EventSubscriber(ObjectType::Codeunit, Codeunit::"Create Put-away", 'OnAfterWhseActivLineInsert', '', true, true)]
-    local procedure UpdateSourceDocumentIntoHeader(var WarehouseActivityLine: Record "Warehouse Activity Line")
+    [EventSubscriber(ObjectType::Codeunit, Codeunit::"Item Tracking Management", 'OnAfterSplitPostedWhseReceiptLine', '', true, true)]
+    local procedure UpdateSourceDocumentIntoHeader(var TempPostedWhseRcptLine: Record "Posted Whse. Receipt Line" temporary)
     var
-        locWarehouseActivityHeader: Record "Warehouse Activity Header";
+        locTempPostedWhseRcptLine: Record "Posted Whse. Receipt Line" temporary;
+        locLocation: Record Location;
+        LineNo: Integer;
     begin
-        // with locWarehouseActivityHeader do
-        //     if Get(WarehouseActivityLine."Activity Type", WarehouseActivityLine."No.") and (("Source No." = '') or ("Source Document" = 0))
-        //         and (WarehouseActivityLine."Source No." <> '') and (WarehouseActivityLine."Source Document" <> 0) then begin
-        //         "Source Document" := WarehouseActivityLine."Source Document";
-        //         "Source No." := WarehouseActivityLine."Source No.";
-        //         Modify();
-        //     end;
+        if locLocation.Get(TempPostedWhseRcptLine."Location Code")
+        and locLocation."Sorting by Expired Date" then begin
+            TempPostedWhseRcptLine.SetCurrentKey("Location Code", "Item No.", "Lot No.", "Expiration Date");
+            if TempPostedWhseRcptLine.FindSet() then
+                repeat
+                    LineNo += 10000;
+                    locTempPostedWhseRcptLine := TempPostedWhseRcptLine;
+                    if locTempPostedWhseRcptLine."Line No." <> LineNo then
+                        locTempPostedWhseRcptLine."Line No." := LineNo;
+                    locTempPostedWhseRcptLine.Insert();
+                until TempPostedWhseRcptLine.Next() = 0;
+
+            TempPostedWhseRcptLine.DeleteAll();
+            if locTempPostedWhseRcptLine.FindSet() then
+                repeat
+                    TempPostedWhseRcptLine := locTempPostedWhseRcptLine;
+                    TempPostedWhseRcptLine.Insert();
+                until locTempPostedWhseRcptLine.Next() = 0;
+        end;
     end;
 }

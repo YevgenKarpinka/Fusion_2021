@@ -89,7 +89,7 @@ page 50000 "Source Parameters"
                     IsSuccessStatusCode: Boolean;
                     responseText: Text;
                 begin
-                    responseText := ShipStationMgt.Connect2eShop('LOGIN2ESHOP', '', '', IsSuccessStatusCode);
+                    responseText := ShipStationMgt.Connect2eShop('LOGIN2ESHOP', '', '', '', IsSuccessStatusCode);
                     if IsSuccessStatusCode then
                         Message('Connection2eShop Ok!')
                     else

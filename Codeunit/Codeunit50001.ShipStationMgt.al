@@ -161,7 +161,7 @@ codeunit 50001 "ShipStation Mgt."
         exit(GetNonceFromResponce(SPCode, responseText));
     end;
 
-    procedure Connect2eShop(SPCode: Code[20]; Body2Request: Text; newURL: Text; var IsSuccessStatusCode: Boolean): Text
+    procedure Connect2eShop(SPCode: Code[20]; Body2Request: Text; xToken: Text; xNonce: Text; var IsSuccessStatusCode: Boolean): Text
     var
         SourceParameters: Record "Source Parameters";
         RequestMessage: HttpRequestMessage;
@@ -170,11 +170,10 @@ codeunit 50001 "ShipStation Mgt."
         Client: HttpClient;
         responseText: Text;
         jsonLogin: JsonObject;
-        xNonce: Text;
+        URL: Text;
     begin
         SourceParameters.Get(SPCode);
-        xNonce := newURL;
-        newURL := SourceParameters."FSp URL";
+        URL := StrSubstNo(SourceParameters."FSp URL", xToken);
 
         if SourceParameters."FSp RestMethod" = SourceParameters."FSp RestMethod"::POST then begin
             if SPCode = 'LOGIN2ESHOP' then begin
@@ -188,7 +187,7 @@ codeunit 50001 "ShipStation Mgt."
             Headers.Add('Content-Type', Format(SourceParameters."FSp ContentType"));
         end;
 
-        RequestMessage.SetRequestUri(newURL);
+        RequestMessage.SetRequestUri(URL);
         RequestMessage.Method := Format(SourceParameters."FSp RestMethod");
         if xNonce <> '' then begin
             RequestMessage.GetHeaders(Headers);
@@ -200,7 +199,7 @@ codeunit 50001 "ShipStation Mgt."
         IsSuccessStatusCode := ResponseMessage.IsSuccessStatusCode();
 
         // Insert Operation to Log
-        InsertOperationToLog('ESHOP', Format(SourceParameters."FSp RestMethod"), newURL, '', Body2Request, responseText, IsSuccessStatusCode);
+        InsertOperationToLog('ESHOP', Format(SourceParameters."FSp RestMethod"), URL, '', Body2Request, responseText, IsSuccessStatusCode);
 
         exit(GetNonceFromResponce(SPCode, responseText));
     end;
@@ -226,18 +225,20 @@ codeunit 50001 "ShipStation Mgt."
     end;
 
     procedure Connector2eShop(Body2Request: Text; var IsSuccessStatusCode: Boolean; var responseText: Text; SPCode: Code[20])
+    var
+        xNonce: Text;
     begin
         if globalToken = '' then begin
             // get to endpoint GetToken
-            firstToken := DelChr(Connect2eShop('GETTOKEN', '', '', IsSuccessStatusCode), '<>', '"');
-            globalToken := DelChr(Connect2eShop('LOGIN2ESHOP', '', firstToken, IsSuccessStatusCode), '<>', '"');
+            xNonce := DelChr(Connect2eShop('GETTOKEN', '', '', '', IsSuccessStatusCode), '<>', '"');
+            globalToken := DelChr(Connect2eShop('LOGIN2ESHOP', '', '', xNonce, IsSuccessStatusCode), '<>', '"');
         end;
         if not IsSuccessStatusCode then begin
             responseText := globalToken;
             exit;
         end;
         // responseText := Connect2eShop('ADDPRODUCT2ESHOP', Body2Request, globalToken, IsSuccessStatusCode);
-        responseText := Connect2eShop(SPCode, Body2Request, globalToken, IsSuccessStatusCode);
+        responseText := Connect2eShop(SPCode, Body2Request, globalToken, xNonce, IsSuccessStatusCode);
     end;
 
     procedure Connect2ShipStation(SPCode: Integer; Body2Request: Text; newURL: Text): Text
@@ -1686,5 +1687,5 @@ codeunit 50001 "ShipStation Mgt."
         _shippedStatus: TextConst ENU = 'Shipped', RUS = 'Отгружен';
         _assemblededStatus: TextConst ENU = 'Assembled', RUS = 'Собран';
         globalToken: Text;
-        firstToken: Text;
+
 }
