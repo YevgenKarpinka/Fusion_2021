@@ -189,9 +189,12 @@ codeunit 50001 "ShipStation Mgt."
 
         RequestMessage.SetRequestUri(URL);
         RequestMessage.Method := Format(SourceParameters."FSp RestMethod");
+        RequestMessage.GetHeaders(Headers);
         if xNonce <> '' then begin
-            RequestMessage.GetHeaders(Headers);
             Headers.Add('X-Nonce', xNonce);
+        end;
+        if xToken <> '' then begin
+            Headers.Add('Authorization', xToken);
         end;
 
         Client.Send(RequestMessage, ResponseMessage);
