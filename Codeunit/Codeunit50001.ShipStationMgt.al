@@ -228,10 +228,8 @@ codeunit 50001 "ShipStation Mgt."
     end;
 
     procedure Connector2eShop(Body2Request: Text; var IsSuccessStatusCode: Boolean; var responseText: Text; SPCode: Code[20])
-    var
-        xNonce: Text;
     begin
-        if globalToken = '' then begin
+        if (globalToken = '') and (xNonce = '') then begin
             // get to endpoint GetToken
             xNonce := DelChr(Connect2eShop('GETTOKEN', '', '', '', IsSuccessStatusCode), '<>', '"');
             globalToken := DelChr(Connect2eShop('LOGIN2ESHOP', '', '', xNonce, IsSuccessStatusCode), '<>', '"');
@@ -1690,5 +1688,6 @@ codeunit 50001 "ShipStation Mgt."
         _shippedStatus: TextConst ENU = 'Shipped', RUS = 'Отгружен';
         _assemblededStatus: TextConst ENU = 'Assembled', RUS = 'Собран';
         globalToken: Text;
+        xNonce: Text;
 
 }

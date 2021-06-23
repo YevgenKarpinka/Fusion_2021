@@ -35,7 +35,7 @@ codeunit 50012 "Transfer Items To Site Mgt"
                 if _jsonItem.Get('SKU', _jsonToken) then begin
                     _jsonItemList.Add(_jsonItem);
 
-                    if ((Counter mod 50) = 0) or (Counter = TotalCount) then begin
+                    if ((Counter mod 300) = 0) or (Counter = TotalCount) then begin
                         _jsonItemList.WriteTo(_jsonText);
 
                         IsSuccessStatusCode := true;
@@ -46,9 +46,9 @@ codeunit 50012 "Transfer Items To Site Mgt"
                             _jsonErrorItemList.Add(_jsonItem);
                         end;
                         Clear(_jsonItemList);
-                        Commit();
                     end;
                     DeleteItemForTransferToSite(ItemTransferList."Item No.");
+                    Commit();
                 end;
             until ItemTransferList.Next() = 0;
         GetGLSetup();
