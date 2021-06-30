@@ -19,6 +19,13 @@ pageextension 50024 "Location Ext." extends "Location Card"
                 ToolTipML = ENU = 'Specifies sorting by expired date in posted warehouse receipt lines.',
                             RUS = 'Указывает сортировку по сроку годности для учтенных строк приемки.';
             }
+            field("Find Bin by Class Code"; Rec."Find Bin by Class Code")
+            {
+                ApplicationArea = Warehouse;
+
+                ToolTipML = ENU = 'Specifies find bin by class code to warehouse receipt lines.',
+                            RUS = 'Указывает поиск ячейки по коду класса для строк приемки.';
+            }
         }
     }
 }

@@ -1,1 +1,1 @@
-﻿{"Added":[],"Modified":[],"Removed":[]}
+﻿{"Added":[],"Modified":[{"Id":50026,"Kind":16,"Name":"Warehouse Shipment List Ext","PackagePath":"/src/PageExt/PageExt50026.WarehouseShipmentListExt.al"},{"Id":50010,"Kind":11,"Name":"Purchase Document Mgt.","PackagePath":"/src/Codeunit/Codeunit50010.PurchaseDocumentMgt.al"},{"Id":50008,"Kind":16,"Name":"Purchase Order Ext.","PackagePath":"/src/PageExt/PageExt50008.PurchaseOrderExt.al"}],"Removed":[{"Id":50006,"Kind":13,"Name":"Get Source Documents Ext","PackagePath":"/src/Report/Report50006.GetSourceDocumentsExt.al"}]}

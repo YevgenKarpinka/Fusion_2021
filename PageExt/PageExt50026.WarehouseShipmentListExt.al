@@ -12,6 +12,7 @@ pageextension 50026 "Warehouse Shipment List Ext" extends "Warehouse Shipment Li
         {
             action(DeleteRecords)
             {
+                ApplicationArea = All;
                 CaptionML = ENU = 'Delete Records',
                             RUS = 'Delete Records';
                 ToolTipML = ENU = 'View or edit serial numbers and lot numbers that are assigned to the item on the document or journal line.',

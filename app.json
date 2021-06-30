@@ -2,7 +2,7 @@
   "id": "6317e880-5065-4f48-98ff-ff40f914c170",
   "name": "Fusion_v16",
   "publisher": "TComTech",
-  "version": "1.0.0.0",
+  "version": "18.0.0.00002",
   "brief": "",
   "description": "",
   "privacyStatement": "",
@@ -12,8 +12,8 @@
   "logo": "",
   "dependencies": [ ],
   "screenshots": [],
-  "platform": "17.0.0.0",
-  "application": "17.0.0.0",
+  "platform": "18.0.0.0",
+  "application": "18.0.0.0",
   "idRanges": [
     {
       "from": 50000,
@@ -22,5 +22,5 @@
   ],
   "contextSensitiveHelpUrl": "https://Fusion_v16.com/help/",
   "showMyCode": true,
-  "runtime": "6.0"
+  "runtime": "7.0"
 }
