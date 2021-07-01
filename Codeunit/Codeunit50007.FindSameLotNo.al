@@ -4,10 +4,17 @@ codeunit 50007 "Find Same Lot No"
     tabledata "Bin Content" = rm, tabledata "Warehouse Activity Line" = r, tabledata "Warehouse Activity Header" = rm;
 
     [EventSubscriber(ObjectType::Codeunit, Codeunit::"Create Put-away", 'OnFindBinContent', '', true, true)]
-    local procedure FindSameLotNo(PostedWhseReceiptLine: Record "Posted Whse. Receipt Line"; PutAwayTemplateLine: Record "Put-away Template Line"; var BinContent: Record "Bin Content")
+    local procedure CreatePutawayOnFindBinContent(PostedWhseReceiptLine: Record "Posted Whse. Receipt Line"; PutAwayTemplateLine: Record "Put-away Template Line"; var BinContent: Record "Bin Content")
     begin
         if PutAwayTemplateLine."Find Same Lot No." then
             BinContent.SetRange("Lot No.", PostedWhseReceiptLine."Lot No.")
+    end;
+
+    [EventSubscriber(ObjectType::Codeunit, Codeunit::"Create Put-away", 'OnFindBin', '', true, true)]
+    local procedure CreatePutawayOnFindBin(PostedWhseReceiptLine: Record "Posted Whse. Receipt Line"; PutAwayTemplateLine: Record "Put-away Template Line"; var Bin: Record Bin)
+    begin
+        if PutAwayTemplateLine."Find Same Lot No." then
+            Bin.SetRange("Lot No.", PostedWhseReceiptLine."Lot No.")
     end;
 
     [EventSubscriber(ObjectType::Codeunit, Codeunit::"Create Put-away", 'OnBeforeCreateNewWhseActivity', '', true, true)]
