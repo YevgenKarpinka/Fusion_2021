@@ -38,26 +38,38 @@ codeunit 50010 "Purchase Document Mgt."
         locPurchaseLine.Modify();
     end;
 
-    [EventSubscriber(ObjectType::Codeunit, Codeunit::"Whse.-Create Source Document", 'OnPurchLine2ReceiptLineOnAfterInitNewLine', '', false, false)]
-    local procedure WhseCreateSourceDocumentOnBeforeWhseReceiptLineInsert(var WhseReceiptLine: Record "Warehouse Receipt Line"; WhseReceiptHeader: Record "Warehouse Receipt Header")
+    [EventSubscriber(ObjectType::Codeunit, Codeunit::"Whse.-Create Source Document", 'OnBeforeUpdateReceiptLine', '', false, false)]
+    local procedure WhseCreateSourceDocumentOnBeforeWhseReceiptLineInsert(var WarehouseReceiptLine: Record "Warehouse Receipt Line"; WarehouseReceiptHeader: Record "Warehouse Receipt Header"; var IsHandled: Boolean)
     var
         locLocation: Record Location;
         locItem: Record Item;
         locBin: Record Bin;
+        cod: Codeunit "Whse.-Create Source Document";
     begin
-        if locLocation.Get(WhseReceiptHeader."Location Code")
+        if locLocation.Get(WarehouseReceiptHeader."Location Code")
         and locLocation."Find Bin by Class Code"
-        and locItem.Get(WhseReceiptLine."Item No.")
-        and locBin.Get(locLocation.Code, WhseReceiptHeader."Bin Code")
+        and locItem.Get(WarehouseReceiptLine."Item No.")
+        and locBin.Get(WarehouseReceiptHeader."Location Code", WarehouseReceiptHeader."Bin Code")
         and (locItem."Warehouse Class Code" <> locBin."Warehouse Class Code") then begin
             locBin.SetCurrentKey("Location Code", "Zone Code", "Warehouse Class Code");
-            locBin.SetRange("Location Code", WhseReceiptHeader."Location Code");
-            locBin.SetRange("Zone Code", WhseReceiptHeader."Zone Code");
+            locBin.SetRange("Location Code", WarehouseReceiptHeader."Location Code");
+            locBin.SetRange("Zone Code", WarehouseReceiptHeader."Zone Code");
             locBin.SetRange("Warehouse Class Code", locItem."Warehouse Class Code");
             if locBin.FindFirst() then begin
-                WhseReceiptHeader."Bin Code" := locBin.Code;
-                WhseReceiptHeader.Modify();
+                WarehouseReceiptHeader."Bin Code" := locBin.Code;
+                // >> standart
+                if WarehouseReceiptHeader."Zone Code" <> '' then
+                    WarehouseReceiptLine.Validate("Zone Code", WarehouseReceiptHeader."Zone Code");
+                if WarehouseReceiptHeader."Bin Code" <> '' then
+                    WarehouseReceiptLine.Validate("Bin Code", WarehouseReceiptHeader."Bin Code");
+                if WarehouseReceiptHeader."Cross-Dock Zone Code" <> '' then
+                    WarehouseReceiptLine.Validate("Cross-Dock Zone Code", WarehouseReceiptHeader."Cross-Dock Zone Code");
+                if WarehouseReceiptHeader."Cross-Dock Bin Code" <> '' then
+                    WarehouseReceiptLine.Validate("Cross-Dock Bin Code", WarehouseReceiptHeader."Cross-Dock Bin Code");
+                // << standart
+                IsHandled := true;
             end;
         end;
     end;
+
 }
