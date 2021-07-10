@@ -94,36 +94,6 @@ page 50010 "APIV2 - Sales Orders"
                         RegisterFieldSet(Rec.FieldNo("Sell-to Customer No."));
                     end;
                 }
-                field(contactId; Rec."Contact Graph Id")
-                {
-                    ApplicationArea = All;
-                    Caption = 'contactId', Locked = true;
-
-                    trigger OnValidate()
-                    var
-                        Contact: Record Contact;
-                        Customer: Record Customer;
-                        GraphIntContact: Codeunit "Graph Int. - Contact";
-                    begin
-                        RegisterFieldSet(Rec.FieldNo("Contact Graph Id"));
-
-                        if Rec."Contact Graph Id" = '' then
-                            Error(ContactIdHasToHaveValueErr);
-
-                        if not GraphIntContact.FindOrCreateCustomerFromGraphContactSafe(Rec."Contact Graph Id", Customer, Contact) then
-                            exit;
-
-                        UpdateCustomerFromGraphContactId(Customer);
-
-                        if Contact."Company No." = Customer."No." then begin
-                            Rec.Validate("Sell-To Contact No.", Contact."No.");
-                            Rec.Validate("Sell-to Contact", Contact.Name);
-
-                            RegisterFieldSet(Rec.FieldNo("Sell-To Contact No."));
-                            RegisterFieldSet(Rec.FieldNo("Sell-to Contact"));
-                        end;
-                    end;
-                }
                 field(customerNumber; Rec."Sell-to Customer No.")
                 {
                     ApplicationArea = All;
@@ -154,18 +124,6 @@ page 50010 "APIV2 - Sales Orders"
                     ApplicationArea = All;
                     Caption = 'customerName', Locked = true;
                     Editable = false;
-                }
-                field(billingPostalAddress; BillingPostalAddressJSONText)
-                {
-                    ApplicationArea = All;
-                    Caption = 'billingPostalAddress', Locked = true;
-                    ODataEDMType = 'POSTALADDRESS';
-                    ToolTip = 'Specifies the billing address of the Sales Invoice.';
-
-                    trigger OnValidate()
-                    begin
-                        BillingPostalAddressSet := true;
-                    end;
                 }
                 field(currencyId; Rec."Currency Id")
                 {
