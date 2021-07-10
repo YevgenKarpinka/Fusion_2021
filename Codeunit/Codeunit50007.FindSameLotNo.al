@@ -17,16 +17,10 @@ codeunit 50007 "Find Same Lot No"
             Bin.SetRange("Lot No.", PostedWhseReceiptLine."Lot No.")
     end;
 
-    [EventSubscriber(ObjectType::Codeunit, Codeunit::"Create Put-away", 'OnBeforeCreateNewWhseActivity', '', true, true)]
-    local procedure LotNo2BinContent(PostedWhseRcptLine: Record "Posted Whse. Receipt Line")
-    var
-        BinContent: Record "Bin Content";
+    [EventSubscriber(ObjectType::Codeunit, Codeunit::"Create Put-away", 'OnCreateBinContentOnBeforeNewBinContentInsert', '', true, true)]
+    local procedure CreatePutawayOnCreateBinContent(PostedWhseReceiptLine: Record "Posted Whse. Receipt Line"; var BinContent: Record "Bin Content")
     begin
-        if BinContent.Get(PostedWhseRcptLine."Location Code", PostedWhseRcptLine."Bin Code", PostedWhseRcptLine."Item No.",
-                PostedWhseRcptLine."Variant Code", PostedWhseRcptLine."Unit of Measure Code") then begin
-            BinContent."Lot No." := PostedWhseRcptLine."Lot No.";
-            BinContent.Modify();
-        end;
+        BinContent."Lot No." := PostedWhseReceiptLine."Lot No.";
     end;
 
     [EventSubscriber(ObjectType::Codeunit, Codeunit::"Item Tracking Management", 'OnAfterSplitPostedWhseReceiptLine', '', true, true)]

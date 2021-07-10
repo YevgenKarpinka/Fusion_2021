@@ -1,1 +1,1 @@
-﻿{"Added":[],"Modified":[{"Id":50010,"Kind":11,"Name":"Purchase Document Mgt.","PackagePath":"/src/Codeunit/Codeunit50010.PurchaseDocumentMgt.al"}],"Removed":[]}
+﻿{"Added":[],"Modified":[{"Id":50007,"Kind":11,"Name":"Find Same Lot No","PackagePath":"/src/Codeunit/Codeunit50007.FindSameLotNo.al"}],"Removed":[]}
