@@ -1,8 +1,8 @@
-pageextension 50020 "Bin Content Ext." extends "Bin Content"
+pageextension 50020 "Bin Contents Ext." extends "Bin Contents"
 {
     layout
     {
-        addfirst(Control1)
+        addafter("Bin Code")
         {
             field("Lot No."; Rec."Lot No.")
             {

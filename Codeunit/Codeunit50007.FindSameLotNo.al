@@ -13,9 +13,26 @@ codeunit 50007 "Find Same Lot No"
     [EventSubscriber(ObjectType::Codeunit, Codeunit::"Create Put-away", 'OnFindBin', '', true, true)]
     local procedure CreatePutawayOnFindBin(PostedWhseReceiptLine: Record "Posted Whse. Receipt Line"; PutAwayTemplateLine: Record "Put-away Template Line"; var Bin: Record Bin)
     begin
-        if PutAwayTemplateLine."Find Same Lot No." then
-            Bin.SetRange("Lot No.", PostedWhseReceiptLine."Lot No.")
+        if PutAwayTemplateLine."Find Same Lot No." then;
+        // Bin.SetRange("Lot No.", PostedWhseReceiptLine."Lot No.")
     end;
+
+    [EventSubscriber(ObjectType::Codeunit, Codeunit::"Whse. Jnl.-Register Line", 'OnInitWhseEntryOnAfterGetToBinContent', '', true, true)]
+    local procedure RegisterPutawayOnCreateBinContent(var WhseJnlLine: Record "Warehouse Journal Line"; var Bin: Record Bin)
+    var
+        BinContent: Record "Bin Content";
+    begin
+        if BinContent.Get(WhseJnlLine."Location Code", Bin.Code, WhseJnlLine."Item No.", WhseJnlLine."Variant Code", WhseJnlLine."Unit of Measure Code") then begin
+            BinContent."Lot No." := WhseJnlLine."Lot No.";
+            BinContent.Modify();
+        end;
+    end;
+
+    // [EventSubscriber(ObjectType::Codeunit, Codeunit::"Whse. Jnl.-Register Line", 'OnBeforeBinContentInsert', '', true, true)]
+    // local procedure RegisterPutawayOnUpdateBinContent(var BinContent: Record "Bin Content"; WarehouseEntry: Record "Warehouse Entry")
+    // begin
+    //     BinContent."Lot No." := WarehouseEntry."Lot No.";
+    // end;
 
     [EventSubscriber(ObjectType::Codeunit, Codeunit::"Create Put-away", 'OnCreateBinContentOnBeforeNewBinContentInsert', '', true, true)]
     local procedure CreatePutawayOnCreateBinContent(PostedWhseReceiptLine: Record "Posted Whse. Receipt Line"; var BinContent: Record "Bin Content")
