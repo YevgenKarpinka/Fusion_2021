@@ -18,5 +18,10 @@ tableextension 50017 "Location Ext." extends Location
             DataClassification = CustomerContent;
             CaptionML = ENU = 'Find Bin by Class Code', RUS = 'Искать ячейку по коду класса';
         }
+        field(50003; "Ignore Class Code In Shipment"; Boolean)
+        {
+            DataClassification = CustomerContent;
+            CaptionML = ENU = 'Ignore Class Code In Shipment', RUS = 'Игнорировать код класса в отгрузке';
+        }
     }
 }

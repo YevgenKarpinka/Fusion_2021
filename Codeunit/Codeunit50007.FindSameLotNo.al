@@ -10,11 +10,30 @@ codeunit 50007 "Find Same Lot No"
             BinContent.SetRange("Lot No.", PostedWhseReceiptLine."Lot No.")
     end;
 
-    [EventSubscriber(ObjectType::Codeunit, Codeunit::"Create Put-away", 'OnFindBin', '', true, true)]
-    local procedure CreatePutawayOnFindBin(PostedWhseReceiptLine: Record "Posted Whse. Receipt Line"; PutAwayTemplateLine: Record "Put-away Template Line"; var Bin: Record Bin)
+    [EventSubscriber(ObjectType::Table, 7354, 'OnBeforeCheckWhseClass', '', true, true)]
+    local procedure CreateShipmentOnBeforeCheckWhseClass(Bin: Record Bin; var IsHandled: Boolean; var ResultValue: Boolean)
+    var
+        locLocation: Record Location;
     begin
-        if PutAwayTemplateLine."Find Same Lot No." then;
-        // Bin.SetRange("Lot No.", PostedWhseReceiptLine."Lot No.")
+        if locLocation.Get(Bin."Location Code")
+        and locLocation."Ignore Class Code In Shipment"
+        and (locLocation."Shipment Bin Code" = Bin.Code) then begin
+            ResultValue := true;
+            IsHandled := true;
+        end;
+    end;
+
+    [EventSubscriber(ObjectType::Table, 7302, 'OnBeforeCheckWhseClass', '', true, true)]
+    local procedure BinContentOnBeforeCheckWhseClass(var BinContent: Record "Bin Content"; var IsHandled: Boolean; var Result: Boolean)
+    var
+        locLocation: Record Location;
+    begin
+        if locLocation.Get(BinContent."Location Code")
+        and locLocation."Ignore Class Code In Shipment"
+        and (locLocation."Shipment Bin Code" = BinContent."Bin Code") then begin
+            Result := true;
+            IsHandled := true;
+        end;
     end;
 
     [EventSubscriber(ObjectType::Codeunit, Codeunit::"Whse. Jnl.-Register Line", 'OnInitWhseEntryOnAfterGetToBinContent', '', true, true)]

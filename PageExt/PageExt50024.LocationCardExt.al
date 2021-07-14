@@ -1,4 +1,4 @@
-pageextension 50024 "Location Ext." extends "Location Card"
+pageextension 50024 "Location Card Ext" extends "Location Card"
 {
     layout
     {
@@ -25,6 +25,13 @@ pageextension 50024 "Location Ext." extends "Location Card"
 
                 ToolTipML = ENU = 'Specifies find bin by class code to warehouse receipt lines.',
                             RUS = 'Указывает поиск ячейки по коду класса для строк приемки.';
+            }
+            field("Ignore Class Code In Shipment"; Rec."Ignore Class Code In Shipment")
+            {
+                ApplicationArea = Warehouse;
+
+                ToolTipML = ENU = 'Specifies ignore class code to warehouse shipment lines.',
+                            RUS = 'Указывает bигнорировать код класса для строк отгрузки.';
             }
         }
     }

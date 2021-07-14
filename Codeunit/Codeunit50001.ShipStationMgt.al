@@ -1018,6 +1018,34 @@ codeunit 50001 "ShipStation Mgt."
         DocumentAttachment.Insert(true);
     end;
 
+    [EventSubscriber(ObjectType::Codeunit, Codeunit::"Whse.-Post Shipment", 'OnAfterRun', '', false, false)]
+    procedure TransferAttachmentToPostedWhseShipment(var WarehouseShipmentLine: Record "Warehouse Shipment Line")
+    var
+        fromDocumentAttachment: Record "Document Attachment";
+        toDocumentAttachment: Record "Document Attachment";
+        PostedSalesShipHeader: Record "Sales Shipment Header";
+    begin
+        exit;
+        if WarehouseShipmentLine."Source Document" <> WarehouseShipmentLine."Source Document"::"Sales Order" then exit;
+
+        PostedSalesShipHeader.SetCurrentKey("Order No.");
+        PostedSalesShipHeader.SetRange("Order No.", WarehouseShipmentLine."Source No.");
+        PostedSalesShipHeader.FindFirst();
+
+        fromDocumentAttachment.SetCurrentKey("Table ID", "No.");
+        fromDocumentAttachment.SetRange("Table ID", DATABASE::"Warehouse Shipment Header");
+        fromDocumentAttachment.SetRange("No.", WarehouseShipmentLine."No.");
+        if fromDocumentAttachment.FindSet() then begin
+            repeat
+                toDocumentAttachment.Get(fromDocumentAttachment."Table ID", fromDocumentAttachment."No.",
+                                         fromDocumentAttachment."Document Type", fromDocumentAttachment."Line No.", fromDocumentAttachment.ID);
+                toDocumentAttachment."Table ID" := DATABASE::"Sales Shipment Header";
+                toDocumentAttachment."No." := PostedSalesShipHeader."No.";
+                toDocumentAttachment.Modify();
+            until fromDocumentAttachment.Next() = 0;
+        end;
+    end;
+
     procedure DeleteAttachment(_WhseShipDocNo: Code[20]; _FileName: Text[250])
     var
         DocumentAttachment: Record "Document Attachment";

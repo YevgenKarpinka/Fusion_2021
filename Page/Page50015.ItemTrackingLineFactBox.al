@@ -18,8 +18,8 @@ page 50015 "Item Tracking Line FactBox"
                 {
                     ApplicationArea = All;
                 }
-                // field("Expiration Date"; itemTrackingMgt.GetItemTrackingExpirationDateByLotNo(ReservEntryLotNo."Lot No.", Rec."Item No."))
-                field("Expiration Date"; ReservEntryLotNo."Expiration Date")
+                field("Expiration Date"; itemTrackingMgt.GetItemTrackingExpirationDateByLotNo(ReservEntryLotNo."Lot No.", ReservEntryLotNo."Item No."))
+                // field("Expiration Date"; itemLedgerEntry."Expiration Date")
                 {
                     ApplicationArea = All;
                 }
