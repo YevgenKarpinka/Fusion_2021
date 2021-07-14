@@ -14,11 +14,13 @@ codeunit 50003 "Bank Checks Mgt."
         if _newStatus = 0 then begin
             if _BankCheck.Status = _BankCheck.Status::Rejected then begin
                 _BankCheck.Status := _newStatus;
+                _BankCheck.Modify(true);
             end;
         end else begin
             _BankCheck.Status := _newStatus;
+            _BankCheck.Modify(true);
         end;
-        _BankCheck.Modify(true);
+
         if _BankCheck.Status = _BankCheck.Status::Confirmed then begin
             // Create Payment Journal Line
             CreatePaymentFromBankCheck(_BankCheck);
@@ -52,12 +54,12 @@ codeunit 50003 "Bank Checks Mgt."
         procesGenJnlLine.SetRange("External Document No.", _BankCheck."Bank Check No.");
         procesGenJnlLine.SetRange("Document Date", _BankCheck."Bank Check Date");
         if not procesGenJnlLine.IsEmpty then
-            exit; // instead; go to the document
+            Error(errBankCheckNoExistInTemplate, _BankCheck."Bank Check No.",
+                    GLSetup."Journal Template Name",
+                    GLSetup."Journal Batch Name"); // instead; go to the document
 
-        if PostedBankCheckExist(_BankCheck."Bank Check No.") then begin
-            Message(msgBankCheckNoExist, _BankCheck."Bank Check No.");
-            exit;
-        end;
+        if PostedBankCheckExist(_BankCheck."Customer No.", _BankCheck."Bank Check No.") then
+            Error(errBankCheckNoExist, _BankCheck."Customer No.", _BankCheck."Bank Check No.");
 
         procesGenJnlLine.SetRange("External Document No.");
         procesGenJnlLine.SetRange("Document Date");
@@ -100,17 +102,20 @@ codeunit 50003 "Bank Checks Mgt."
     end;
 
 
-    local procedure PostedBankCheckExist(BankCheckNo: Code[35]): Boolean
+    local procedure PostedBankCheckExist(CustNo: Code[20]; BankCheckNo: Code[35]): Boolean
     var
         GLEntry: Record "G/L Entry";
     begin
-        GLEntry.SetCurrentKey("External Document No.");
+        GLEntry.SetCurrentKey("External Document No.", "Bal. Account Type", "Bal. Account No.");
         GLEntry.SetRange("External Document No.", BankCheckNo);
+        GLEntry.SetRange("Bal. Account Type", GLEntry."Bal. Account Type"::Customer);
+        GLEntry.SetRange("Bal. Account No.", CustNo);
         exit(not GLEntry.IsEmpty);
     end;
 
     var
         GLSetup: Record "General Ledger Setup";
         NoSeriesMgt: Codeunit NoSeriesManagement;
-        msgBankCheckNoExist: TextConst ENU = 'Bank Check No = %1 Exist!', RUS = 'Банковский Чек Но = %1 существует!';
+        errBankCheckNoExist: TextConst ENU = 'Bank Check No %1 for customer %2 posted!', RUS = 'Банковский чек %1 для клиента %2 учтён!';
+        errBankCheckNoExistInTemplate: TextConst ENU = 'Bank Check No = %1 exist in Template = %2, Batch = %3!', RUS = 'Банковский Чек Но = %1 существует в Шаблоне = %2, Разделе = %3!';
 }

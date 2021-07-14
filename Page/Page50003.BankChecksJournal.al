@@ -20,6 +20,7 @@ page 50003 "Bank Checks Journal"
                 field(ID; Rec.ID)
                 {
                     ApplicationArea = All;
+                    Visible = false;
                 }
                 field("Bank Check Date"; Rec."Bank Check Date")
                 {
@@ -76,7 +77,7 @@ page 50003 "Bank Checks Journal"
                     _BankCheck: Record "Bank Check Journal Line";
                 begin
                     CurrPage.SetSelectionFilter(_BankCheck);
-                    if _BankCheck.FindSet(false, false) then
+                    if _BankCheck.FindSet() then
                         repeat
                             _BankCheckMgt.SetBankCheckStatus(_BankCheck, _BankCheck.Status::Confirmed);
                         until _BankCheck.Next() = 0;
@@ -93,11 +94,18 @@ page 50003 "Bank Checks Journal"
                     _BankCheck: Record "Bank Check Journal Line";
                 begin
                     CurrPage.SetSelectionFilter(_BankCheck);
-                    if _BankCheck.FindSet(false, false) then
+                    if _BankCheck.FindSet() then
                         repeat
                             _BankCheckMgt.SetBankCheckStatus(_BankCheck, _BankCheck.Status::Rejected);
                         until _BankCheck.Next() = 0;
                 end;
+            }
+            action(ChecksArchive)
+            {
+                ApplicationArea = All;
+                Image = Archive;
+                CaptionML = ENU = 'Checks Archive', RUS = 'Архив чеков';
+                RunObject = Page "Bank Checks Archive";
             }
         }
     }

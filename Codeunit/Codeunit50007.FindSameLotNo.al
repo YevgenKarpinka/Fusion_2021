@@ -36,22 +36,45 @@ codeunit 50007 "Find Same Lot No"
         end;
     end;
 
-    [EventSubscriber(ObjectType::Codeunit, Codeunit::"Whse. Jnl.-Register Line", 'OnInitWhseEntryOnAfterGetToBinContent', '', true, true)]
-    local procedure RegisterPutawayOnCreateBinContent(var WhseJnlLine: Record "Warehouse Journal Line"; var Bin: Record Bin)
+    [EventSubscriber(ObjectType::Codeunit, Codeunit::"Whse. Jnl.-Register Line", 'OnUpdateDefaultBinContentOnBeforeBinContentModify', '', true, true)]
+    local procedure RegisterWhseJnlOnCreateBinContent(var BinContent: Record "Bin Content")
     var
-        BinContent: Record "Bin Content";
+        WhseEntry: Record "Warehouse Entry";
     begin
-        if BinContent.Get(WhseJnlLine."Location Code", Bin.Code, WhseJnlLine."Item No.", WhseJnlLine."Variant Code", WhseJnlLine."Unit of Measure Code") then begin
-            BinContent."Lot No." := WhseJnlLine."Lot No.";
+        WhseEntry.SetCurrentKey("Location Code", "Bin Code", "Item No.", "Variant Code", "Unit of Measure Code");
+        WhseEntry.SetRange("Location Code", BinContent."Location Code");
+        WhseEntry.SetRange("Bin Code", BinContent."Bin Code");
+        WhseEntry.SetRange("Item No.", BinContent."Item No.");
+        WhseEntry.SetRange("Variant Code", BinContent."Variant Code");
+        WhseEntry.SetRange("Unit of Measure Code", BinContent."Unit of Measure Code");
+        if WhseEntry.FindFirst() then begin
+            BinContent."Lot No." := WhseEntry."Lot No.";
             BinContent.Modify();
         end;
     end;
 
-    // [EventSubscriber(ObjectType::Codeunit, Codeunit::"Whse. Jnl.-Register Line", 'OnBeforeBinContentInsert', '', true, true)]
-    // local procedure RegisterPutawayOnUpdateBinContent(var BinContent: Record "Bin Content"; WarehouseEntry: Record "Warehouse Entry")
-    // begin
-    //     BinContent."Lot No." := WarehouseEntry."Lot No.";
-    // end;
+    [EventSubscriber(ObjectType::Codeunit, Codeunit::"Whse. Jnl.-Register Line", 'OnUpdateDefaultBinContentOnBeforeBinContent2Modify', '', true, true)]
+    local procedure RegisterWhseJnlOnCreateBinContent2(var BinContent: Record "Bin Content")
+    var
+        WhseEntry: Record "Warehouse Entry";
+    begin
+        WhseEntry.SetCurrentKey("Location Code", "Bin Code", "Item No.", "Variant Code", "Unit of Measure Code");
+        WhseEntry.SetRange("Location Code", BinContent."Location Code");
+        WhseEntry.SetRange("Bin Code", BinContent."Bin Code");
+        WhseEntry.SetRange("Item No.", BinContent."Item No.");
+        WhseEntry.SetRange("Variant Code", BinContent."Variant Code");
+        WhseEntry.SetRange("Unit of Measure Code", BinContent."Unit of Measure Code");
+        if WhseEntry.FindFirst() then begin
+            BinContent."Lot No." := WhseEntry."Lot No.";
+            BinContent.Modify();
+        end;
+    end;
+
+    [EventSubscriber(ObjectType::Codeunit, Codeunit::"Whse. Jnl.-Register Line", 'OnBeforeBinContentInsert', '', true, true)]
+    local procedure RegisterWhseJnlOnInsertBinContent(var BinContent: Record "Bin Content"; WarehouseEntry: Record "Warehouse Entry")
+    begin
+        BinContent."Lot No." := WarehouseEntry."Lot No.";
+    end;
 
     [EventSubscriber(ObjectType::Codeunit, Codeunit::"Create Put-away", 'OnCreateBinContentOnBeforeNewBinContentInsert', '', true, true)]
     local procedure CreatePutawayOnCreateBinContent(PostedWhseReceiptLine: Record "Posted Whse. Receipt Line"; var BinContent: Record "Bin Content")
