@@ -881,7 +881,8 @@ codeunit 50001 "ShipStation Mgt."
         jsLabelObject.ReadFrom(JSText);
         txtLabel := GetJSToken(jsLabelObject, 'labelData').AsValue().AsText();
         txtBeforeName := _SH."No." + '-' + GetJSToken(jsLabelObject, 'trackingNumber').AsValue().AsText();
-        SaveLabel2Shipment(txtBeforeName, txtLabel, WhseShipDocNo);
+        // SaveLabel2Shipment(txtBeforeName, txtLabel, WhseShipDocNo);
+        SaveLabel2Order(txtBeforeName, txtLabel, DocNo);
 
         ChangeShipStationStatusInSOToShipped(_SH."No.");
     end;
@@ -974,6 +975,64 @@ codeunit 50001 "ShipStation Mgt."
         exit(false);
     end;
 
+    procedure SaveLabel2Order(_txtBefore: Text; _txtLabelBase64: Text; _OrderNo: Code[20])
+    var
+        RecRef: RecordRef;
+        SalesHeader: Record "Sales Header";
+        lblOrder: TextConst ENU = 'LabelOrder';
+        FileName: Text;
+        tempblob: Codeunit "Temp Blob";
+    begin
+        RecRef.OPEN(DATABASE::"Sales Header");
+        SalesHeader.Get(SalesHeader."Document Type"::Order, _OrderNo);
+        RecRef.GETTABLE(SalesHeader);
+        FileName := StrSubstNo('%1-%2.pdf', _txtBefore, lblOrder);
+        SaveAttachment(RecRef, FileName, _txtLabelBase64);
+    end;
+
+    local procedure SaveAttachment(RecRef: RecordRef; IncomingFileName: Text; LabelBase64: Text)
+    var
+        // FieldRef: FieldRef;
+        _InStream: InStream;
+        _OutStream: OutStream;
+        RecNo: Code[20];
+        RecType: Enum "Attachment Document Type";
+        LineNo: Integer;
+        TenantMedia: Record "Tenant Media";
+        DocumentAttachment: Record "Document Attachment";
+        FileManagement: Codeunit "File Management";
+        Base64Convert: Codeunit "Base64 Convert";
+    begin
+        DocumentAttachment.Init();
+        DocumentAttachment.Validate("File Extension", FileManagement.GetExtension(IncomingFileName));
+        DocumentAttachment.Validate("File Name", CopyStr(FileManagement.GetFileNameWithoutExtension(IncomingFileName), 1, MaxStrLen(DocumentAttachment."File Name")));
+
+        TenantMedia.Content.CreateOutStream(_OutStream);
+        Base64Convert.FromBase64(LabelBase64, _OutStream);
+        TenantMedia.Content.CreateInStream(_InStream);
+        DocumentAttachment."Document Reference ID".ImportStream(_InStream, IncomingFileName);
+
+        DocumentAttachment.Validate("Table ID", RecRef.Number);
+        case RecRef.Number of
+            36:
+                begin
+                    // FieldRef := RecRef.Field(1);
+                    RecType := RecRef.Field(1).Value;
+                    // FieldRef := RecRef.Field(2);
+                    RecNo := RecRef.Field(3).Value;
+                    DocumentAttachment.Validate("Document Type", RecType);
+                end;
+            else begin
+                    // FieldRef := RecRef.Field(1);
+                    RecNo := RecRef.Field(1).Value;
+                end;
+
+        end;
+
+        DocumentAttachment.Validate("No.", RecNo);
+        DocumentAttachment.Insert(true);
+    end;
+
     procedure SaveLabel2Shipment(_txtBefore: Text; _txtLabelBase64: Text; _WhseShipDocNo: Code[20])
     var
         RecRef: RecordRef;
@@ -986,7 +1045,7 @@ codeunit 50001 "ShipStation Mgt."
         WhseShipHeader.Get(_WhseShipDocNo);
         RecRef.GETTABLE(WhseShipHeader);
         FileName := StrSubstNo('%1-%2.pdf', _txtBefore, lblOrder);
-        SaveAttachment2WhseShmt(RecRef, FileName, _txtLabelBase64);
+        SaveAttachment(RecRef, FileName, _txtLabelBase64);
     end;
 
     local procedure SaveAttachment2WhseShmt(RecRef: RecordRef; IncomingFileName: Text; LabelBase64: Text)

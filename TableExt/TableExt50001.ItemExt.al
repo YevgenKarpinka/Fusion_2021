@@ -104,10 +104,10 @@ tableextension 50001 "Item Ext." extends Item
         }
     }
 
-    // fieldgroups
-    // {
-    //     addlast(DropDown; "Manufacturer Code", "Brand Code")
-    //     {
-    //     }
-    // }
+    fieldgroups
+    {
+        addlast(DropDown; "Manufacturer Code", "Brand Code")
+        {
+        }
+    }
 }
