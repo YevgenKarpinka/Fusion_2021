@@ -48,7 +48,7 @@ codeunit 50001 "ShipStation Mgt."
         _jsonOrderShipmentStatus.WriteTo(_jsonText);
 
         IsSuccessStatusCode := true;
-        Connector2eShop(_jsonText, IsSuccessStatusCode, responseText, 'SENTDELIVERYSTATUS2ESHOP');
+        Connector2eShop(_jsonText, IsSuccessStatusCode, responseText, 'SENTDELIVERYSTATUS2E');
         if not IsSuccessStatusCode then begin
             _captionMgt.SaveStreamToFile(responseText, 'errorItemList.txt');
         end;
@@ -992,7 +992,6 @@ codeunit 50001 "ShipStation Mgt."
 
     local procedure SaveAttachment(RecRef: RecordRef; IncomingFileName: Text; LabelBase64: Text)
     var
-        // FieldRef: FieldRef;
         _InStream: InStream;
         _OutStream: OutStream;
         RecNo: Code[20];
@@ -1016,14 +1015,11 @@ codeunit 50001 "ShipStation Mgt."
         case RecRef.Number of
             36:
                 begin
-                    // FieldRef := RecRef.Field(1);
                     RecType := RecRef.Field(1).Value;
-                    // FieldRef := RecRef.Field(2);
                     RecNo := RecRef.Field(3).Value;
                     DocumentAttachment.Validate("Document Type", RecType);
                 end;
             else begin
-                    // FieldRef := RecRef.Field(1);
                     RecNo := RecRef.Field(1).Value;
                 end;
 
@@ -1046,35 +1042,6 @@ codeunit 50001 "ShipStation Mgt."
         RecRef.GETTABLE(WhseShipHeader);
         FileName := StrSubstNo('%1-%2.pdf', _txtBefore, lblOrder);
         SaveAttachment(RecRef, FileName, _txtLabelBase64);
-    end;
-
-    local procedure SaveAttachment2WhseShmt(RecRef: RecordRef; IncomingFileName: Text; LabelBase64: Text)
-    var
-        FieldRef: FieldRef;
-        _InStream: InStream;
-        _OutStream: OutStream;
-        RecNo: Code[20];
-        DocType: Option Quote,"Order",Invoice,"Credit Memo","Blanket Order","Return Order";
-        LineNo: Integer;
-        TenantMedia: Record "Tenant Media";
-        DocumentAttachment: Record "Document Attachment";
-        FileManagement: Codeunit "File Management";
-        Base64Convert: Codeunit "Base64 Convert";
-    begin
-        DocumentAttachment.Init();
-        DocumentAttachment.Validate("File Extension", FileManagement.GetExtension(IncomingFileName));
-        DocumentAttachment.Validate("File Name", CopyStr(FileManagement.GetFileNameWithoutExtension(IncomingFileName), 1, MaxStrLen(DocumentAttachment."File Name")));
-
-        TenantMedia.Content.CreateOutStream(_OutStream);
-        Base64Convert.FromBase64(LabelBase64, _OutStream);
-        TenantMedia.Content.CreateInStream(_InStream);
-        DocumentAttachment."Document Reference ID".ImportStream(_InStream, IncomingFileName);
-
-        DocumentAttachment.Validate("Table ID", RecRef.Number);
-        FieldRef := RecRef.Field(1);
-        RecNo := FieldRef.Value;
-        DocumentAttachment.Validate("No.", RecNo);
-        DocumentAttachment.Insert(true);
     end;
 
     [EventSubscriber(ObjectType::Codeunit, Codeunit::"Whse.-Post Shipment", 'OnAfterRun', '', false, false)]
