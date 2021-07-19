@@ -24,6 +24,11 @@ table 50005 "ShipStation Setup"
             DataClassification = CustomerContent;
             CaptionML = ENU = 'Show Error', RUS = 'Показывать ошибку';
         }
+        field(5; "CRM Integration Enable"; Boolean)
+        {
+            DataClassification = CustomerContent;
+            CaptionML = ENU = 'CRM Integration Enable', RUS = 'Интегрировать с CRM';
+        }
     }
 
     keys

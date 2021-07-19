@@ -459,9 +459,9 @@ codeunit 50006 "IC Extended"
             _ICSalesLine.SetRange("Document No.", _ICSalesHeader."No.");
             _ICSalesLine.SetRange(Type, _ICSalesLine.Type::Item);
             _ICSalesLine.SetFilter(Quantity, '<>%1', 0);
-            if _ICSalesLine.FindSet(true, false) then begin
+            if _ICSalesLine.FindSet() then 
                 _ICSalesLine.AutoReserve();
-            end;
+            
             // Update Status = Assembled Sales Order into Site
             GetShipStationSetup();
             if glShipStationSetup."Order Status Update" then

@@ -12,7 +12,7 @@ page 50017 "ShipStation Setup"
     {
         area(Content)
         {
-            group(General)
+            group(ShipStation)
             {
                 field("ShipStation Integration Enable"; Rec."ShipStation Integration Enable")
                 {
@@ -23,6 +23,13 @@ page 50017 "ShipStation Setup"
                     ApplicationArea = All;
                 }
                 field("Show Error"; Rec."Show Error")
+                {
+                    ApplicationArea = All;
+                }
+            }
+            group(CRM)
+            {
+                field("CRM Integration Enable"; Rec."CRM Integration Enable")
                 {
                     ApplicationArea = All;
                 }
