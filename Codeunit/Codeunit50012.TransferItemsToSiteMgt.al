@@ -27,7 +27,7 @@ codeunit 50012 "Transfer Items To Site Mgt"
         Counter := 0;
         TotalCount := ItemTransferList.Count;
 
-        if ItemTransferList.FindSet(false, false) then
+        if ItemTransferList.FindSet() then
             repeat
                 _jsonItem := ShipStationMgt.CreateJsonItemForWooComerse(ItemTransferList."Item No.");
                 Counter += 1;
@@ -79,7 +79,7 @@ codeunit 50012 "Transfer Items To Site Mgt"
     begin
         ItemForTransfer.SetCurrentKey("Web Item");
         ItemForTransfer.SetRange("Web Item", true);
-        if ItemForTransfer.FindSet(false, false) then
+        if ItemForTransfer.FindSet() then
             repeat
                 AddItemForTransferToSite(ItemForTransfer."No.");
             until ItemForTransfer.Next() = 0;
@@ -94,7 +94,7 @@ codeunit 50012 "Transfer Items To Site Mgt"
         if not GLSetup."Transfer Items Allowed" then exit;
 
         ItemForTransfer.SetFilter("No.", ItemNoFilter);
-        if ItemForTransfer.FindSet(false, true) then
+        if ItemForTransfer.FindSet() then
             repeat
                 if ItemForTransfer."Web Item" then
                     if not ItemTransferList.Get(ItemForTransfer."No.") then begin
@@ -130,7 +130,7 @@ codeunit 50012 "Transfer Items To Site Mgt"
         PurchLine.SetRange("Document No.", PurchaseHeader."No.");
         PurchLine.SetRange(Type, PurchLine.Type::Item);
         PurchLine.SetFilter(Quantity, '<>%1', 0);
-        if PurchLine.FindSet(false, false) then begin
+        if PurchLine.FindSet() then begin
             repeat
                 ItemNoFilter += '|' + PurchLine."No.";
             until PurchLine.Next() = 0;
@@ -156,7 +156,7 @@ codeunit 50012 "Transfer Items To Site Mgt"
         SalesLine.SetRange("Document No.", SalesHeader."No.");
         SalesLine.SetRange(Type, SalesLine.Type::Item);
         SalesLine.SetFilter(Quantity, '<>%1', 0);
-        if SalesLine.FindSet(false, false) then begin
+        if SalesLine.FindSet() then begin
             repeat
                 ItemNoFilter += '|' + SalesLine."No.";
             until SalesLine.Next() = 0;
@@ -238,7 +238,7 @@ codeunit 50012 "Transfer Items To Site Mgt"
         Counter := 0;
         TotalCount := _Item.Count;
 
-        if _Item.FindSet(false, false) then
+        if _Item.FindSet() then
             repeat
                 _jsonItem := ShipStationMgt.CreateJsonItemForWooComerse(_Item."No.");
                 Counter += 1;

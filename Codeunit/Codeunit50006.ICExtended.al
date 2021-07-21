@@ -430,12 +430,12 @@ codeunit 50006 "IC Extended"
             _ICPurchHeader."Vendor Invoice No." := SalesInvHdrNo;
             _ICPurchHeader.Modify();
         end;
+
         // Update Status = Shipped Sales Order into Site
-        GetShipStationSetup();
-        if glShipStationSetup."Order Status Update" then
-            if SalesHeader."External Document No." <> '' then begin
-                ShipStationMgt.SentOrderShipmentStatusForWooComerse(SalesHeader."No.", 1);
-            end;
+        // GetShipStationSetup();
+        // if glShipStationSetup."Order Status Update" then
+        // if SalesHeader."External Document No." <> '' then
+        //     ShipStationMgt.SentOrderShipmentStatusForWooComerse(SalesHeader."No.", 1);
     end;
 
     [EventSubscriber(ObjectType::Codeunit, Codeunit::"Purch.-Post", 'OnAfterPostPurchaseDoc', '', false, false)]
@@ -459,13 +459,13 @@ codeunit 50006 "IC Extended"
             _ICSalesLine.SetRange("Document No.", _ICSalesHeader."No.");
             _ICSalesLine.SetRange(Type, _ICSalesLine.Type::Item);
             _ICSalesLine.SetFilter(Quantity, '<>%1', 0);
-            if _ICSalesLine.FindSet() then 
+            if _ICSalesLine.FindSet() then
                 _ICSalesLine.AutoReserve();
-            
+
             // Update Status = Assembled Sales Order into Site
-            GetShipStationSetup();
-            if glShipStationSetup."Order Status Update" then
-                ShipStationMgt.SentOrderShipmentStatusForWooComerse(_ICSalesHeader."No.", 0);
+            // GetShipStationSetup();
+            // if glShipStationSetup."Order Status Update" then
+            // ShipStationMgt.SentOrderShipmentStatusForWooComerse(_ICSalesHeader."No.", 0);
         end;
     end;
 

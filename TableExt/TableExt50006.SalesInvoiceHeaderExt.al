@@ -57,6 +57,11 @@ tableextension 50006 "Sales Invoice Header Ext." extends "Sales Invoice Header"
             DataClassification = CustomerContent;
             CaptionML = ENU = 'IC Document No.', RUS = 'МФ Документ Но.';
         }
+        field(50009; "CRM ID"; Guid)
+        {
+            DataClassification = CustomerContent;
+            CaptionML = ENU = 'CRM ID', RUS = 'CRM ID';
+        }
     }
 
     keys

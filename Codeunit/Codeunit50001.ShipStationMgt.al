@@ -48,7 +48,7 @@ codeunit 50001 "ShipStation Mgt."
         _jsonOrderShipmentStatus.WriteTo(_jsonText);
 
         IsSuccessStatusCode := true;
-        Connector2eShop(_jsonText, IsSuccessStatusCode, responseText, 'SENTDELIVERYSTATUS2E');
+        Connector2eShop(_jsonText, IsSuccessStatusCode, responseText, 'DELIVERYSTATUS');
         if not IsSuccessStatusCode then begin
             _captionMgt.SaveStreamToFile(responseText, 'errorItemList.txt');
         end;
