@@ -46,9 +46,11 @@ codeunit 50012 "Transfer Items To Site Mgt"
                             _jsonErrorItemList.Add(_jsonItem);
                         end;
                         Clear(_jsonItemList);
+                        if IsSuccessStatusCode then
+                            Commit();
                     end;
                     DeleteItemForTransferToSite(ItemTransferList."Item No.");
-                    Commit();
+
                 end;
             until ItemTransferList.Next() = 0;
         GetGLSetup();
