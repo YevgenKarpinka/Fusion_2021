@@ -229,7 +229,7 @@ codeunit 50001 "ShipStation Mgt."
 
     procedure Connector2eShop(Body2Request: Text; var IsSuccessStatusCode: Boolean; var responseText: Text; SPCode: Code[20])
     begin
-        if (globalToken = '') and (xNonce = '') then begin
+        if (globalToken = '') or (xNonce = '') then begin
             // get to endpoint GetToken
             xNonce := DelChr(Connect2eShop('GETTOKEN', '', '', '', IsSuccessStatusCode), '<>', '"');
             globalToken := DelChr(Connect2eShop('LOGIN2ESHOP', '', '', xNonce, IsSuccessStatusCode), '<>', '"');
