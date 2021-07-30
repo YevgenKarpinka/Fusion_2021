@@ -36,7 +36,21 @@ codeunit 50007 "Find Same Lot No"
         end;
     end;
 
-    [EventSubscriber(ObjectType::Codeunit, Codeunit::"Whse. Jnl.-Register Line", 'OnUpdateDefaultBinContentOnBeforeBinContentModify', '', true, true)]
+    // OnAfterInsertWhseEntry
+    [EventSubscriber(ObjectType::Codeunit, Codeunit::"Whse. Jnl.-Register Line", 'OnAfterInsertWhseEntry', '', true, true)]
+    local procedure RegisterWhseJnlOnAfterInsertWhseEntry(var WarehouseEntry: Record "Warehouse Entry")
+    var
+        BinContent: Record "Bin Content";
+    begin
+        if BinContent.Get(WarehouseEntry."Location Code", WarehouseEntry."Bin Code", WarehouseEntry."Item No.",
+                        WarehouseEntry."Variant Code", WarehouseEntry."Unit of Measure Code") then begin
+            BinContent."Lot No." := WarehouseEntry."Lot No.";
+            BinContent.Modify();
+        end;
+
+    end;
+
+    // [EventSubscriber(ObjectType::Codeunit, Codeunit::"Whse. Jnl.-Register Line", 'OnUpdateDefaultBinContentOnBeforeBinContentModify', '', true, true)]
     local procedure RegisterWhseJnlOnCreateBinContent(var BinContent: Record "Bin Content")
     var
         WhseEntry: Record "Warehouse Entry";
@@ -53,7 +67,7 @@ codeunit 50007 "Find Same Lot No"
         end;
     end;
 
-    [EventSubscriber(ObjectType::Codeunit, Codeunit::"Whse. Jnl.-Register Line", 'OnUpdateDefaultBinContentOnBeforeBinContent2Modify', '', true, true)]
+    // [EventSubscriber(ObjectType::Codeunit, Codeunit::"Whse. Jnl.-Register Line", 'OnUpdateDefaultBinContentOnBeforeBinContent2Modify', '', true, true)]
     local procedure RegisterWhseJnlOnCreateBinContent2(var BinContent: Record "Bin Content")
     var
         WhseEntry: Record "Warehouse Entry";
@@ -70,7 +84,7 @@ codeunit 50007 "Find Same Lot No"
         end;
     end;
 
-    [EventSubscriber(ObjectType::Codeunit, Codeunit::"Whse. Jnl.-Register Line", 'OnBeforeBinContentInsert', '', true, true)]
+    // [EventSubscriber(ObjectType::Codeunit, Codeunit::"Whse. Jnl.-Register Line", 'OnBeforeBinContentInsert', '', true, true)]
     local procedure RegisterWhseJnlOnInsertBinContent(var BinContent: Record "Bin Content"; WarehouseEntry: Record "Warehouse Entry")
     begin
         BinContent."Lot No." := WarehouseEntry."Lot No.";

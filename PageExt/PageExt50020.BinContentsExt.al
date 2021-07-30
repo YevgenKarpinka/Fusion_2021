@@ -10,4 +10,5 @@ pageextension 50020 "Bin Contents Ext." extends "Bin Contents"
             }
         }
     }
+
 }
