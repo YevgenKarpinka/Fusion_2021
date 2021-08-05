@@ -44,10 +44,15 @@ codeunit 50007 "Find Same Lot No"
     begin
         if BinContent.Get(WarehouseEntry."Location Code", WarehouseEntry."Bin Code", WarehouseEntry."Item No.",
                         WarehouseEntry."Variant Code", WarehouseEntry."Unit of Measure Code") then begin
-            BinContent."Lot No." := WarehouseEntry."Lot No.";
-            BinContent.Modify();
+            BinContent.CalcFields("Quantity (Base)");
+            if BinContent."Quantity (Base)" > 0 then begin
+                BinContent."Lot No." := WarehouseEntry."Lot No.";
+                BinContent.Modify();
+            end else begin
+                BinContent."Lot No." := '';
+                BinContent.Modify();
+            end;
         end;
-
     end;
 
     // [EventSubscriber(ObjectType::Codeunit, Codeunit::"Whse. Jnl.-Register Line", 'OnUpdateDefaultBinContentOnBeforeBinContentModify', '', true, true)]
