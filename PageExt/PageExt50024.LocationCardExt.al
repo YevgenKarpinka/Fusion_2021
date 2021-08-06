@@ -8,6 +8,7 @@ pageextension 50024 "Location Card Ext" extends "Location Card"
             field("Create Move"; Rec."Create Move")
             {
                 ApplicationArea = Warehouse;
+                Visible = false;
 
                 ToolTipML = ENU = 'Specifies that a move line is created, if an appropriate zone and bin from which to pick the item cannot be found.',
                             RUS = 'Указывает, что создается линия перемещения, если не удается найти подходящую зону и корзину, из которой можно выбрать товар.';

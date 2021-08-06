@@ -43,6 +43,7 @@ pageextension 50005 "Sales Order Ext." extends "Sales Order"
             {
                 // Importance = Promoted;
                 ApplicationArea = All;
+                Editable = false;
             }
         }
         addafter("Shipping Agent Code")
@@ -68,6 +69,7 @@ pageextension 50005 "Sales Order Ext." extends "Sales Order"
             group(groupShipStation)
             {
                 CaptionML = ENU = 'ShipStation', RUS = 'ShipStation';
+                Visible = false;
 
                 field("ShipStation Order ID"; Rec."ShipStation Order ID")
                 {
@@ -168,6 +170,7 @@ pageextension 50005 "Sales Order Ext." extends "Sales Order"
             {
                 CaptionML = ENU = 'ShipStation', RUS = 'ShipStation';
                 Image = ReleaseShipment;
+                Visible = false;
 
                 action("Create/Update Order")
                 {
