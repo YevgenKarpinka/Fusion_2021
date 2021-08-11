@@ -69,42 +69,59 @@ pageextension 50005 "Sales Order Ext." extends "Sales Order"
             group(groupShipStation)
             {
                 CaptionML = ENU = 'ShipStation', RUS = 'ShipStation';
-                Visible = false;
 
-                field("ShipStation Order ID"; Rec."ShipStation Order ID")
+                field("ShipStation Carrier"; Rec."ShipStation Carrier")
                 {
                     ApplicationArea = All;
 
+                }
+                field("ShipStation Service"; Rec."ShipStation Service")
+                {
+                    ApplicationArea = All;
+
+                }
+                field("ShipStation Package"; Rec."ShipStation Package")
+                {
+                    ApplicationArea = All;
+
+                }
+                field("ShipStation Order ID"; Rec."ShipStation Order ID")
+                {
+                    ApplicationArea = All;
+                    Visible = false;
                 }
                 field("ShipStation Order Key"; Rec."ShipStation Order Key")
                 {
                     ApplicationArea = All;
-
+                    Visible = false;
                 }
                 field("ShipStation Status"; Rec."ShipStation Status")
                 {
                     ApplicationArea = All;
-
+                    Visible = false;
                 }
                 field("ShipStation Shipment Amount"; Rec."ShipStation Shipment Amount")
                 {
                     ApplicationArea = All;
-
+                    Visible = false;
                 }
                 field("ShipStation Shipment Cost"; Rec."ShipStation Shipment Cost")
                 {
                     ApplicationArea = All;
                     Importance = Additional;
+                    Visible = false;
                 }
                 field("ShipStation Insurance Cost"; Rec."ShipStation Insurance Cost")
                 {
                     ApplicationArea = All;
                     Importance = Additional;
+                    Visible = false;
                 }
                 field("ShipStation Shipment ID"; Rec."ShipStation Shipment ID")
                 {
                     ApplicationArea = All;
                     Importance = Additional;
+                    Visible = false;
                 }
             }
         }
@@ -170,15 +187,16 @@ pageextension 50005 "Sales Order Ext." extends "Sales Order"
             {
                 CaptionML = ENU = 'ShipStation', RUS = 'ShipStation';
                 Image = ReleaseShipment;
-                Visible = false;
+                // Visible = false;
 
                 action("Create/Update Order")
                 {
                     ApplicationArea = All;
                     CaptionML = ENU = 'Create Order', RUS = 'Создать Заказ';
                     Image = CreateDocuments;
-                    Visible = (Rec.Status = Rec.Status::Released)
-                                and (Rec."ShipStation Shipment ID" = '');
+                    Visible = false;
+                    // Visible = (Rec.Status = Rec.Status::Released)
+                    //             and (Rec."ShipStation Shipment ID" = '');
 
                     trigger OnAction()
                     var
@@ -199,7 +217,7 @@ pageextension 50005 "Sales Order Ext." extends "Sales Order"
                     CaptionML = ENU = 'Get Rates', RUS = 'Получить Стоимость';
                     Image = CalculateShipment;
                     // Visible = Status = Status::Open;
-                    Visible = false;
+                    // Visible = false;
 
                     trigger OnAction()
                     var
@@ -223,9 +241,10 @@ pageextension 50005 "Sales Order Ext." extends "Sales Order"
                     ApplicationArea = All;
                     CaptionML = ENU = 'Create Label', RUS = 'Создать бирку';
                     Image = PrintReport;
-                    Visible = (Rec."ShipStation Order ID" <> '')
-                                and (Rec."ShipStation Shipment ID" = '')
-                                and (Rec.Status = Rec.Status::Released);
+                    Visible = false;
+                    // Visible = (Rec."ShipStation Order ID" <> '')
+                    //             and (Rec."ShipStation Shipment ID" = '')
+                    //             and (Rec.Status = Rec.Status::Released);
 
                     trigger OnAction()
                     var
@@ -247,7 +266,8 @@ pageextension 50005 "Sales Order Ext." extends "Sales Order"
                     ApplicationArea = All;
                     CaptionML = ENU = 'Void Label', RUS = 'Отменить бирку';
                     Image = VoidCreditCard;
-                    Visible = (Rec."ShipStation Shipment ID" <> '') and (Rec."ShipStation Order ID" <> '');
+                    Visible = false;
+                    // Visible = (Rec."ShipStation Shipment ID" <> '') and (Rec."ShipStation Order ID" <> '');
 
                     trigger OnAction()
                     var

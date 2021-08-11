@@ -3,6 +3,29 @@ pageextension 50013 "Posted Sales Invoice Ext." extends "Posted Sales Invoice"
     layout
     {
         // Add changes to page layout here
+        addbefore("Shipping Details")
+        {
+            group(groupShipStation)
+            {
+                CaptionML = ENU = 'ShipStation', RUS = 'ShipStation';
+
+                field("ShipStation Carrier"; Rec."ShipStation Carrier")
+                {
+                    ApplicationArea = All;
+
+                }
+                field("ShipStation Service"; Rec."ShipStation Service")
+                {
+                    ApplicationArea = All;
+
+                }
+                field("ShipStation Package"; Rec."ShipStation Package")
+                {
+                    ApplicationArea = All;
+
+                }
+            }
+        }
         addfirst(factboxes)
         {
             part(ItemTrackingEntries; "Post.Item Track.Entr.FackBox")

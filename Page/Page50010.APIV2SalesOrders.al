@@ -64,6 +64,36 @@ page 50010 "APIV2 - Sales Orders"
                     end;
                 }
                 // >>
+                field(shipstationCarrier; Rec."ShipStation Carrier")
+                {
+                    ApplicationArea = All;
+                    Caption = 'shipstationCarrier', Locked = true;
+
+                    trigger OnValidate()
+                    begin
+                        RegisterFieldSet(Rec.FIELDNO("ShipStation Carrier"));
+                    end;
+                }
+                field(shipstationService; Rec."ShipStation Service")
+                {
+                    ApplicationArea = All;
+                    Caption = 'shipstationService', Locked = true;
+
+                    trigger OnValidate()
+                    begin
+                        RegisterFieldSet(Rec.FIELDNO("ShipStation Service"));
+                    end;
+                }
+                field(shipstationPackage; Rec."ShipStation Package")
+                {
+                    ApplicationArea = All;
+                    Caption = 'shipstationPackage', Locked = true;
+
+                    trigger OnValidate()
+                    begin
+                        RegisterFieldSet(Rec.FIELDNO("ShipStation Package"));
+                    end;
+                }
                 field(shipstationShipmentAmount; Rec."ShipStation Shipment Amount")
                 {
                     ApplicationArea = All;
@@ -72,6 +102,30 @@ page 50010 "APIV2 - Sales Orders"
                     trigger OnValidate()
                     begin
                         RegisterFieldSet(Rec.FIELDNO("ShipStation Shipment Amount"));
+                    end;
+                }
+                field(shippingPostalAddress; ShippingPostalAddressJSONText)
+                {
+                    ApplicationArea = All;
+                    Caption = 'shippingPostalAddress', Locked = true;
+                    ODataEDMType = 'POSTALADDRESS';
+                    ToolTip = 'Specifies the shipping address for the order.';
+
+                    trigger OnValidate()
+                    begin
+                        ShippingPostalAddressSet := TRUE;
+                    end;
+                }
+                field(billingPostalAddress; BillingPostalAddressJSONText)
+                {
+                    ApplicationArea = All;
+                    Caption = 'billingPostalAddress', Locked = true;
+                    ODataEDMType = 'POSTALADDRESS';
+                    ToolTip = 'Specifies the billing address for the order.';
+
+                    trigger OnValidate()
+                    begin
+                        BillingPostalAddressSet := TRUE;
                     end;
                 }
                 // <<
@@ -380,6 +434,7 @@ page 50010 "APIV2 - Sales Orders"
     begin
         CheckCustomerSpecified;
         ProcessBillingPostalAddress;
+        ProcessShippingPostalAddress;
 
         GraphMgtSalesOrderBuffer.PropagateOnInsert(Rec, TempFieldBuffer);
         SetDates;
@@ -397,6 +452,7 @@ page 50010 "APIV2 - Sales Orders"
             Error(CannotChangeIDErr);
 
         ProcessBillingPostalAddress;
+        ProcessShippingPostalAddress;
 
         GraphMgtSalesOrderBuffer.PropagateOnModify(Rec, TempFieldBuffer);
         UpdateDiscount;
@@ -429,6 +485,8 @@ page 50010 "APIV2 - Sales Orders"
         CurrencyCodeTxt: Text;
         BillingPostalAddressJSONText: Text;
         BillingPostalAddressSet: Boolean;
+        ShippingPostalAddressJSONText: Text;
+        ShippingPostalAddressSet: Boolean;
         CustomerNotProvidedErr: Label 'A customerNumber or a customerId must be provided.', Locked = true;
         CustomerValuesDontMatchErr: Label 'The customer values do not match to a specific Customer.', Locked = true;
         CouldNotFindCustomerErr: Label 'The customer cannot be found.', Locked = true;
@@ -452,13 +510,24 @@ page 50010 "APIV2 - Sales Orders"
         GraphMgtSalesOrder: Codeunit "Graph Mgt - Sales Order";
     begin
         BillingPostalAddressJSONText := GraphMgtSalesOrder.BillToCustomerAddressToJSON(Rec);
+        ShippingPostalAddressJSONText := ShippToCustomerAddressToJSON(Rec);
         CurrencyCodeTxt := GraphMgtGeneralTools.TranslateNAVCurrencyCodeToCurrencyCode(LCYCurrencyCode, Rec."Currency Code");
         PartialShipping := (Rec."Shipping Advice" = Rec."Shipping Advice"::Partial);
+    end;
+
+    procedure ShippToCustomerAddressToJSON(var SalesOrderEntityBuffer: Record "Sales Order Entity Buffer") JSON: Text
+    var
+        GraphMgtComplexTypes: Codeunit "Graph Mgt - Complex Types";
+    begin
+        GraphMgtComplexTypes.GetPostalAddressJSON(SalesOrderEntityBuffer."Ship-to Address", SalesOrderEntityBuffer."Ship-to Address 2",
+          SalesOrderEntityBuffer."Ship-to City", SalesOrderEntityBuffer."Ship-to County", SalesOrderEntityBuffer."Ship-to Country/Region Code",
+          SalesOrderEntityBuffer."Ship-to Post Code", JSON);
     end;
 
     local procedure ClearCalculatedFields()
     begin
         Clear(BillingPostalAddressJSONText);
+        Clear(ShippingPostalAddressJSONText);
         Clear(DiscountAmountSet);
         Clear(InvoiceDiscountAmount);
 
@@ -515,6 +584,40 @@ page 50010 "APIV2 - Sales Orders"
 
         if xRec."Sell-to County" <> Rec."Sell-to County" then
             RegisterFieldSet(Rec.FieldNo("Sell-to County"));
+    end;
+
+    procedure ProcessShipComplexTypes(var SalesOrderEntityBuffer: Record "Sales Order Entity Buffer"; ShipToAddressJSON: Text)
+    var
+        GraphMgtSalesOrder: Codeunit "Graph Mgt - Sales Order";
+    begin
+        GraphMgtSalesOrder.ParseShipToCustomerAddressFromJSON(ShipToAddressJSON, SalesOrderEntityBuffer);
+    end;
+
+    local procedure ProcessShippingPostalAddress()
+
+    begin
+        if not ShippingPostalAddressSet then
+            exit;
+
+        ProcessShipComplexTypes(Rec, ShippingPostalAddressJSONText);
+
+        if xRec."Ship-to Address" <> Rec."Ship-to Address" then
+            RegisterFieldSet(Rec.FieldNo("Ship-to Address"));
+
+        if xRec."Ship-to Address 2" <> Rec."Ship-to Address 2" then
+            RegisterFieldSet(Rec.FieldNo("Ship-to Address 2"));
+
+        if xRec."Ship-to City" <> Rec."Ship-to City" then
+            RegisterFieldSet(Rec.FieldNo("Ship-to City"));
+
+        if xRec."Ship-to Country/Region Code" <> Rec."Sell-to Country/Region Code" then
+            RegisterFieldSet(Rec.FieldNo("Ship-to Country/Region Code"));
+
+        if xRec."Ship-to Post Code" <> Rec."Ship-to Post Code" then
+            RegisterFieldSet(Rec.FieldNo("Ship-to Post Code"));
+
+        if xRec."Ship-to County" <> Rec."Ship-to County" then
+            RegisterFieldSet(Rec.FieldNo("Ship-to County"));
     end;
 
     local procedure ProcessPartialShipping()

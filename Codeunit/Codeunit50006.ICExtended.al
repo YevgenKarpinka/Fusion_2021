@@ -248,8 +248,8 @@ codeunit 50006 "IC Extended"
         FoundPurchaseOrder(SalesHeader."No.", _PurchaseOrderNo, _PostedPurchaseInvoceNo);
         if (_PurchaseOrderNo = '') and (_PostedPurchaseInvoceNo = '') then begin
             CreateICPurchaseOrder(SalesHeader);
-            CreateDeliverySalesLine(SalesHeader."No.", SalesHeader."Sell-to Customer No.");
-            CreateItemChargeAssgnt(SalesHeader."No.", SalesHeader."Sell-to Customer No.");
+            // CreateDeliverySalesLine(SalesHeader."No.", SalesHeader."Sell-to Customer No.");
+            // CreateItemChargeAssgnt(SalesHeader."No.", SalesHeader."Sell-to Customer No.");
         end;
     end;
 

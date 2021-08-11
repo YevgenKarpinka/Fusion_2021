@@ -423,7 +423,7 @@ codeunit 50001 "ShipStation Mgt."
         if _SH."ShipStation Order Key" <> '' then
             JSObjectHeader.Add('orderKey', _SH."ShipStation Order Key");
         JSObjectHeader.Add('orderDate', Date2Text4JSON(_SH."Posting Date"));
-        JSObjectHeader.Add('paymentDate', Date2Text4JSON(_SH."Prepayment Due Date"));
+        JSObjectHeader.Add('paymentDate', Date2Text4JSON(_SH."Due Date"));
         JSObjectHeader.Add('shipByDate', Date2Text4JSON(_SH."Shipment Date"));
         JSObjectHeader.Add('orderStatus', lblAwaitingShipment);
         JSObjectHeader.Add('customerUsername', _Cust."E-Mail");
@@ -436,8 +436,16 @@ codeunit 50001 "ShipStation Mgt."
         // JSObjectHeader.Add('dimensions', jsonDimentionsFromAttributeValue(_SH."No."));
 
         // Carrier and Service are read only
+        // to do getting carrier & service from order
         // JSObjectHeader.Add('carrierCode', GetCarrierCodeByAgentCode(_SH."Shipping Agent Code"));
         // JSObjectHeader.Add('serviceCode', GetServiceCodeByAgentServiceCode(_SH."Shipping Agent Code", _SH."Shipping Agent Service Code"));
+        if (_SH."ShipStation Carrier" <> '') then begin
+            JSObjectHeader.Add('carrierCode', _SH."ShipStation Carrier");
+            if _SH."ShipStation Service" <> '' then
+                JSObjectHeader.Add('serviceCode', _SH."ShipStation Service");
+            if _SH."ShipStation Package" <> '' then
+                JSObjectHeader.Add('packageCode', _SH."ShipStation Package");
+        end;
 
         // Clear(jsonTagsArray);
         JSObjectHeader.Add('tagIds', jsonTagsArray);

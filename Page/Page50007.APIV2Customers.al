@@ -53,24 +53,16 @@ page 50007 "APIV2 - Customers"
                         RegisterFieldSet(Rec.FIELDNO("Contact Type"));
                     end;
                 }
-                field(addressLine1; Rec.Address)
+                field(address; PostalAddressJSON)
                 {
                     ApplicationArea = All;
-                    Caption = 'addressLine1', Locked = true;
+                    Caption = 'address', Locked = true;
+                    ODataEDMType = 'POSTALADDRESS';
+                    ToolTip = 'Specifies the address for the customer.';
 
                     trigger OnValidate()
                     begin
-                        RegisterFieldSet(Rec.FIELDNO(Address));
-                    end;
-                }
-                field(addressLine2; Rec."Address 2")
-                {
-                    ApplicationArea = All;
-                    Caption = 'addressLine1', Locked = true;
-
-                    trigger OnValidate()
-                    begin
-                        RegisterFieldSet(Rec.FIELDNO("Address 2"));
+                        PostalAddressSet := TRUE;
                     end;
                 }
                 field(phoneNumber; Rec."Phone No.")
@@ -273,26 +265,26 @@ page 50007 "APIV2 - Customers"
                 }
 
                 // >>
-                field(shippingAgent; Rec."Shipping Agent Code")
-                {
-                    ApplicationArea = All;
-                    Caption = 'shippingAgent', Locked = true;
+                // field(shippingAgent; Rec."Shipping Agent Code")
+                // {
+                //     ApplicationArea = All;
+                //     Caption = 'shippingAgent', Locked = true;
 
-                    trigger OnValidate()
-                    begin
-                        RegisterFieldSet(Rec.FIELDNO("Shipping Agent Code"));
-                    end;
-                }
-                field(shippingAgentService; Rec."Shipping Agent Service Code")
-                {
-                    ApplicationArea = All;
-                    Caption = 'shippingAgentService', Locked = true;
+                //     trigger OnValidate()
+                //     begin
+                //         RegisterFieldSet(Rec.FIELDNO("Shipping Agent Code"));
+                //     end;
+                // }
+                // field(shippingAgentService; Rec."Shipping Agent Service Code")
+                // {
+                //     ApplicationArea = All;
+                //     Caption = 'shippingAgentService', Locked = true;
 
-                    trigger OnValidate()
-                    begin
-                        RegisterFieldSet(Rec.FIELDNO("Shipping Agent Service Code"));
-                    end;
-                }
+                //     trigger OnValidate()
+                //     begin
+                //         RegisterFieldSet(Rec.FIELDNO("Shipping Agent Service Code"));
+                //     end;
+                // }
                 // <<
 
                 field(lastModifiedDateTime; Rec."Last Modified Date Time")
