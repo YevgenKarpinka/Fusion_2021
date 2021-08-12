@@ -41,9 +41,7 @@ pageextension 50005 "Sales Order Ext." extends "Sales Order"
             }
             field("CRM ID"; Rec."CRM ID")
             {
-                // Importance = Promoted;
                 ApplicationArea = All;
-                Editable = false;
             }
         }
         addafter("Shipping Agent Code")

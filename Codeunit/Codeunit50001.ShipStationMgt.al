@@ -1172,6 +1172,7 @@ codeunit 50001 "ShipStation Mgt."
             jsonInsuranceOptions.Add('insuredValue', GetJSToken(_JSObject, 'orderTotal').AsValue().AsDecimal());
         end else
             jsonInsuranceOptions := jsonInsurance;
+
         JSObjectHeader.Add('insuranceOptions', jsonInsuranceOptions);
 
         JSObjectHeader.Add('testLabel', false);
