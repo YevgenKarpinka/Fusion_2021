@@ -294,14 +294,14 @@ table 50000 "Item Description"
         _RecordRef: RecordRef;
         _OutStream: OutStream;
     begin
-        if _TextField <> '' then begin
-            _RecordRef.GetTable(Rec);
-            _FieldRef := _RecordRef.Field(_FieldNo);
-            tmpTenantMedia.Content.CreateOutStream(_OutStream, TextEncoding::UTF8);
-            _OutStream.WriteText(_TextField);
-            _FieldRef.Value := tmpTenantMedia.Content;
-            _RecordRef.Modify;
-        end;
+        // if _TextField <> '' then begin
+        _RecordRef.GetTable(Rec);
+        _FieldRef := _RecordRef.Field(_FieldNo);
+        tmpTenantMedia.Content.CreateOutStream(_OutStream, TextEncoding::UTF8);
+        _OutStream.WriteText(_TextField);
+        _FieldRef.Value := tmpTenantMedia.Content;
+        _RecordRef.Modify;
+        // end;
     end;
     // <<<
 

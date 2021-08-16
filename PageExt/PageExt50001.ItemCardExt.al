@@ -708,6 +708,7 @@ pageextension 50001 "Item Card Ext." extends "Item Card"
         Clear(txtIngredientsRU);
         Clear(txtIndicationsRU);
         Clear(txtDirectionsRU);
+        Clear(ItemDescription);
         if ItemDescription.Get(Rec."No.") then begin
             ItemDescriptionExist := true;
             ItemDescription.BlobOnAfterGetRec(ItemDescription.FieldNo(Warning), txtWarning);
@@ -731,6 +732,7 @@ pageextension 50001 "Item Card Ext." extends "Item Card"
             ItemDescription.BlobOnAfterGetRec(ItemDescription.FieldNo("Indications RU"), txtIndicationsRU);
             ItemDescription.BlobOnAfterGetRec(ItemDescription.FieldNo("Directions RU"), txtDirectionsRU);
         end;
+
     end;
 
     local procedure ItemDescriptionModify()
