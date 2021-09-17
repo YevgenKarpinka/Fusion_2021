@@ -16,6 +16,16 @@ page 50018 "Item Descr"
                     ApplicationArea = All;
 
                 }
+                field("Name RU"; Rec."Name RU")
+                {
+                    ApplicationArea = All;
+
+                }
+                field("Name ENG"; Rec."Name ENG")
+                {
+                    ApplicationArea = All;
+
+                }
             }
         }
     }

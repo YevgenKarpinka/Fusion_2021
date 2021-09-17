@@ -28,6 +28,16 @@ page 50005 "Item Filter Group List"
                     ApplicationArea = All;
                     Visible = visibleValue;
                 }
+                field(FilterGroupRU; Rec."Filter Group RUS")
+                {
+                    ApplicationArea = All;
+                    Visible = visibleGroup;
+                }
+                field(FilterValueRU; Rec."Filter Value RUS")
+                {
+                    ApplicationArea = All;
+                    Visible = visibleValue;
+                }
             }
         }
     }

@@ -31,7 +31,7 @@ codeunit 50001 "ShipStation Mgt."
         exit(positionGrossWeight);
     end;
 
-    procedure SentOrderShipmentStatusForWooComerse(_salesOrderNo: Code[20]; locShippedStatus: Integer)
+    procedure SentOrderShipmentStatusForWooComerse(_salesOrderNo: Code[20]; _ShippedStatus: Text[50])
     var
         _jsonOrderShipmentStatus: JsonObject;
         _jsonToken: JsonToken;
@@ -43,7 +43,7 @@ codeunit 50001 "ShipStation Mgt."
         GetShipStationSetup();
         if not glShipStationSetup."Order Status Update" then exit;
 
-        _jsonOrderShipmentStatus := CreateJsonOrderShipmentStatusForWooComerse(_salesOrderNo, locShippedStatus);
+        _jsonOrderShipmentStatus := CreateJsonOrderShipmentStatusForWooComerse(_salesOrderNo, _ShippedStatus);
         if not _jsonOrderShipmentStatus.Get('id', _jsonToken) then exit;
         _jsonOrderShipmentStatus.WriteTo(_jsonText);
 
@@ -54,32 +54,14 @@ codeunit 50001 "ShipStation Mgt."
         end;
     end;
 
-    local procedure CreateJsonOrderShipmentStatusForWooComerse(_salesOrderNo: Code[20]; locShippedStatus: Integer): JsonObject
+    local procedure CreateJsonOrderShipmentStatusForWooComerse(_salesOrderNo: Code[20]; locShippedStatus: Text[50]): JsonObject
     var
-        _salerHeader: Record "Sales Header";
         _jsonObject: JsonObject;
         _jsonNullArray: JsonArray;
-        _iCExtended: Codeunit "IC Extended";
-        _orderNo: Code[20];
-        _postedOrderNo: Code[20];
     begin
-        // _iCExtended.FoundPurchaseOrder(_salesOrderNo, _orderNo, _postedOrderNo);
-        // if (_orderNo = '') and (_postedOrderNo = '') then begin
-        //     _jsonObject.Add('id', _salesOrderNo);
-        //     _jsonObject.Add('status', _shippedStatus);
-        //     _jsonObject.Add('trackId', _jsonTrackIdFromSalesOreder(_salesOrderNo));
-        // end else begin
-        //     _iCExtended.FoundParentICSalesOrder(_salesOrderNo, _orderNo);
-        //     if _orderNo <> '' then begin
-        //         _jsonObject.Add('id', _salesOrderNo);
-        //         _jsonObject.Add('status', _shippedStatus);
-        //         _jsonObject.Add('trackId', _jsonNullArray);
-        //     end;
-        // end;
         _jsonObject.Add('id', _salesOrderNo);
-        // _jsonObject.Add('status', _shippedStatus);
-        if locShippedStatus = 0 then begin
-            _jsonObject.Add('status', _assemblededStatus);
+        if locShippedStatus = lblAwaitingShipment then begin
+            _jsonObject.Add('status', _assembledStatus);
             _jsonObject.Add('trackId', _jsonNullArray);
         end else begin
             _jsonObject.Add('status', _shippedStatus);
@@ -849,6 +831,9 @@ codeunit 50001 "ShipStation Mgt."
             _SH."ShipStation Shipment ID" := '';
         end;
         _SH.Modify();
+
+        if glShipStationSetup."Order Status Update" then
+            SentOrderShipmentStatusForWooComerse(_SH."No.", _SH."ShipStation Status");
     end;
 
     procedure CreateLabel2OrderInShipStation(DocNo: Code[20]): Boolean
@@ -1189,7 +1174,6 @@ codeunit 50001 "ShipStation Mgt."
     begin
         _SH.Get(_SH."Document Type"::Order, DocNo);
         _Cust.Get(_SH."Bill-to Customer No.");
-        _Contact.Get(_SH."Bill-to Contact No.");
 
         JSObjectLine.Add('name', _SH."Bill-to Contact");
         JSObjectLine.Add('company', _Cust.Name);
@@ -1200,7 +1184,8 @@ codeunit 50001 "ShipStation Mgt."
         JSObjectLine.Add('state', _SH."Bill-to County");
         JSObjectLine.Add('postalCode', _SH."Bill-to Post Code");
         JSObjectLine.Add('country', _SH."Bill-to Country/Region Code");
-        JSObjectLine.Add('phone', _Contact."Phone No.");
+        if _Contact.Get(_SH."Bill-to Contact No.") then
+            JSObjectLine.Add('phone', _Contact."Phone No.");
         JSObjectLine.Add('residential', false);
         exit(JSObjectLine);
     end;
@@ -1752,7 +1737,7 @@ codeunit 50001 "ShipStation Mgt."
         msgCarriersListUpdated: TextConst ENU = '%1 list updated', RUS = 'Обновить список %1?';
         errorWhseShipNotExist: TextConst ENU = 'Warehouse Shipment is not Created for Sales Order = %1!', RUS = 'Для Заказа продажи = %1 не создана Складская отгрузка!';
         _shippedStatus: TextConst ENU = 'Shipped', RUS = 'Отгружен';
-        _assemblededStatus: TextConst ENU = 'Assembled', RUS = 'Собран';
+        _assembledStatus: TextConst ENU = 'Assembled', RUS = 'Собран';
         globalToken: Text;
         xNonce: Text;
 
