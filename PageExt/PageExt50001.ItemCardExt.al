@@ -10,6 +10,11 @@ pageextension 50001 "Item Card Ext." extends "Item Card"
                 ApplicationArea = All;
                 Importance = Additional;
             }
+            field("Expiration Date"; Rec."Expiration Date")
+            {
+                ApplicationArea = All;
+                Importance = Additional;
+            }
         }
         addafter("VAT Bus. Posting Gr. (Price)")
         {

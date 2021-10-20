@@ -34,6 +34,13 @@ pageextension 50024 "Location Card Ext" extends "Location Card"
                 ToolTipML = ENU = 'Specifies ignore class code to warehouse shipment lines.',
                             RUS = 'Указывает bигнорировать код класса для строк отгрузки.';
             }
+            field("Expired Items Not Reserve"; Rec."Expired Items Not Reserve")
+            {
+                ApplicationArea = Warehouse;
+
+                ToolTipML = ENU = 'Prohibits reservation of expired items.',
+                            RUS = 'Запрещает резервирование просроченного товара.';
+            }
         }
     }
 }

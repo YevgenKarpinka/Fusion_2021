@@ -49,6 +49,18 @@ page 50016 "Reservation Entry List"
                 {
                     ApplicationArea = All;
                 }
+                field("Quantity (Base)"; Rec."Quantity (Base)")
+                {
+                    ApplicationArea = All;
+                }
+                field("Quantity Invoiced (Base)"; Rec."Quantity Invoiced (Base)")
+                {
+                    ApplicationArea = All;
+                }
+                field("Qty. to Handle (Base)"; Rec."Qty. to Handle (Base)")
+                {
+                    ApplicationArea = All;
+                }
                 field("Expiration Date"; Rec."Expiration Date")
                 {
                     ApplicationArea = All;

@@ -102,11 +102,19 @@ tableextension 50001 "Item Ext." extends Item
             CaptionML = ENU = 'YR', RUS = 'YR';
             DecimalPlaces = 0 : 2;
         }
+        field(50014; "Expiration Date"; Date)
+        {
+            // DataClassification = CustomerContent;
+            CaptionML = ENU = 'Expiration Date', RUS = 'Срок годности';
+            FieldClass = FlowField;
+            CalcFormula = min("Item Ledger Entry"."Expiration Date" where(Open = const(true), "Item No." = field("No.")));
+
+        }
     }
 
     fieldgroups
     {
-        addlast(DropDown; "Manufacturer Code", "Brand Code")
+        addlast(DropDown; "Expiration Date", "Manufacturer Code")
         {
         }
     }

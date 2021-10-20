@@ -30,7 +30,4 @@ pageextension 50026 "Warehouse Shipment List Ext" extends "Warehouse Shipment Li
             }
         }
     }
-
-    var
-        myInt: Integer;
 }

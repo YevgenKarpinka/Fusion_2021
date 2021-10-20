@@ -3,7 +3,7 @@ pageextension 50022 "Warehouse Pick Ext." extends "Warehouse Pick"
     layout
     {
         // Add changes to page layout here
-        addbefore("No.")
+        addafter("No.")
         {
             field(CustomerName; ShipStationMgt.GetCustomerNameFromWhsePick(Rec."No."))
             {

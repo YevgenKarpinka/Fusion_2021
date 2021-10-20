@@ -262,7 +262,6 @@ report 50005 "Whse.-Shpt Create Pick Avail"
         LastActivityNo: Code[20];
         AssignedID: Code[50];
         SortActivity: Enum "Whse. Activity Sorting Method";
-        // SortActivity: Option " ",Item,Document,"Shelf or Bin","Due Date",Destination,"Bin Ranking","Action Type";
         PrintDoc: Boolean;
         EverythingHandled: Boolean;
         WhseWkshLineFound: Boolean;

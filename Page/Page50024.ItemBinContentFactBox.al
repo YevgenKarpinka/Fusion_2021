@@ -3,8 +3,9 @@ page 50024 "Item Bin Content FactBox"
     PageType = ListPart;
     ApplicationArea = Basic, Suite;
     UsageCategory = History;
-    SourceTable = "Item Ledger Entry";
-    CaptionML = ENU = 'Item Tracking Entries', RUS = 'Операции трассировки товара';
+    SourceTable = "Bin Content";
+    // SourceTableTemporary = true;
+    CaptionML = ENU = 'Item Bin Contents', RUS = 'Содержимое ячеек по товару';
     AccessByPermission = tabledata "Bin Content" = r;
     Editable = false;
 
@@ -14,15 +15,7 @@ page 50024 "Item Bin Content FactBox"
         {
             repeater("Item Bin Content")
             {
-                field("Lot No."; Rec."Lot No.")
-                {
-                    ApplicationArea = All;
-                }
-                field("Expiration Date"; Rec."Expiration Date")
-                {
-                    ApplicationArea = All;
-                }
-                field("Remaining Quantity"; Rec."Remaining Quantity")
+                field("Bin Code"; Rec."Bin Code")
                 {
                     ApplicationArea = All;
                 }
@@ -30,36 +23,30 @@ page 50024 "Item Bin Content FactBox"
                 {
                     ApplicationArea = All;
                 }
-                // field("Bin Code"; BinContent."Bin Code")
+                field("Unit of Measure Code"; Rec."Unit of Measure Code")
+                {
+                    ApplicationArea = All;
+                }
+                field("Lot No."; Rec."Lot No.")
+                {
+                    ApplicationArea = All;
+                }
+                field(ExpirationDate; WhseEntry."Expiration Date")
+                {
+                    ApplicationArea = All;
+                    Caption = 'Expiration Date';
+                }
+                field(CalcQtyAvailToTakeUOM; Rec.CalcQtyAvailToTakeUOM)
+                {
+                    ApplicationArea = All;
+                    Caption = 'Available Qty. to Take';
+                    DecimalPlaces = 0 : 5;
+                }
+                // field("Remaining Quantity"; Rec."Remaining Quantity")
                 // {
                 //     ApplicationArea = All;
                 // }
-                // field("Bin Type Code"; BinContent."Bin Type Code")
-                // {
-                //     ApplicationArea = All;
-                // }
-
-                // field("Available Quantity"; BinContent.CalcQtyAvailToTakeUOM())
-                // {
-                //     ApplicationArea = All;
-                // }
-                // field("Pick Qty."; BinContent."Pick Qty.")
-                // {
-                //     ApplicationArea = All;
-                // }
-                // field("Put-away Qty."; BinContent."Put-away Qty.")
-                // {
-                //     ApplicationArea = All;
-                // }
-                // field("Neg. Adjmt. Qty."; BinContent."Neg. Adjmt. Qty.")
-                // {
-                //     ApplicationArea = All;
-                // }
-                // field("Pos. Adjmt. Qty."; BinContent."Pos. Adjmt. Qty.")
-                // {
-                //     ApplicationArea = All;
-                // }
-                // field("Document Date"; "Document Date")
+                // field(Quantity; Rec.Quantity)
                 // {
                 //     ApplicationArea = All;
                 // }
@@ -67,19 +54,58 @@ page 50024 "Item Bin Content FactBox"
         }
     }
 
-    trigger OnAfterGetRecord()
+    var
+        WhseEntry: Record "Warehouse Entry";
+        BinContent: Record "Bin Content";
+        BinType: Record "Bin Type";
+        BinTypeFilter: Text[250];
+
+    trigger OnOpenPage()
     begin
-        // BinContent.SetRange("Location Code", "Location Code");
-        // BinContent.SetRange("Item No.", "Item No.");
-        // BinContent.SetRange("Variant Code", "Variant Code");
-        // BinContent.SetRange("Unit of Measure Code", "Unit of Measure Code");
-        // BinContent.SetFilter("Lot No. Filter", "Lot No.");
-        // if BinContent.FindSet(false, false) then
-        //     repeat
-        //         if BinContent.CalcQtyAvailToTakeUOM() > 0 then exit;
-        //     until BinContent.Next() = 0;
+        BinType.CreateBinTypeFilter(BinTypeFilter, 2);
+        Rec.SetFilter("Bin Type Code", BinTypeFilter);
     end;
 
+    trigger OnFindRecord(Which: Text): Boolean
     var
-        BinContent: Record "Bin Content";
+        NextRecNotFound: Boolean;
+    begin
+        if not Rec.Find(Which) then
+            exit(false);
+
+        if ShowRecord() then
+            exit(true);
+
+        repeat
+            NextRecNotFound := Rec.Next <= 0;
+            if ShowRecord() then
+                exit(true);
+        until NextRecNotFound;
+
+        exit(false);
+    end;
+
+    trigger OnNextRecord(Steps: Integer): Integer
+    var
+        NewStepCount: Integer;
+    begin
+        repeat
+            NewStepCount := Rec.Next(Steps);
+        until (NewStepCount = 0) or ShowRecord();
+
+        exit(NewStepCount);
+    end;
+
+    trigger OnAfterGetRecord()
+    begin
+        ClearAll();
+        WhseEntry.SetCurrentKey("Bin Code");
+        WhseEntry.SetRange("Bin Code", Rec."Bin Code");
+        if WhseEntry.FindFirst() then;
+    end;
+
+    local procedure ShowRecord(): Boolean
+    begin
+        exit(Rec.CalcQtyAvailToTakeUOM() > 0);
+    end;
 }

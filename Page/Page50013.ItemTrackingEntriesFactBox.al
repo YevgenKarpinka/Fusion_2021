@@ -22,46 +22,47 @@ page 50013 "Item Tracking Entries FactBox"
                 {
                     ApplicationArea = All;
                 }
+                field(BinCode; BinCode)
+                {
+                    ApplicationArea = All;
+                    Caption = 'Bin Code';
+                }
+                field(CalcQtyAvailToTakeUOM; CalcQtyAvailToTakeUOM)
+                {
+                    ApplicationArea = All;
+                    Caption = 'Available Qty. to Take';
+                    DecimalPlaces = 0 : 5;
+                }
                 field("Remaining Quantity"; Rec."Remaining Quantity")
                 {
                     ApplicationArea = All;
                 }
-                // field(Quantity; Quantity)
-                // {
-                //     ApplicationArea = All;
-                // }
-                // field("Serial No."; "Serial No.")
-                // {
-                //     ApplicationArea = All;
-                // }
-                // field("Location Code"; "Location Code")
-                // {
-                //     ApplicationArea = All;
-                // }
-                // field("Item No."; "Item No.")
-                // {
-                //     ApplicationArea = All;
-                // }
-                // field("Document No."; "Document No.")
-                // {
-                //     ApplicationArea = All;
-                // }
-                // field("Document Date"; "Document Date")
-                // {
-                //     ApplicationArea = All;
-                // }
             }
         }
     }
 
-    // trigger OnAfterGetRecord()
-    // begin
-    //     with ItemLedgerEntry do begin
-    //         set
-    //     end;
-    // end;
+    var
+        BinContent: Record "Bin Content";
+        CalcQtyAvailToTakeUOM: Decimal;
+        txtBinCode: Text;
+        BinCode: Code[150];
 
-    // var
-    //     Item:Record Item;
-    //     ItemLedgerEntry: Record "Item Ledger Entry";
+    trigger OnAfterGetRecord()
+    begin
+        ClearAll();
+        BinContent.SetCurrentKey("Location Code", "Item No.", "Variant Code", "Unit of Measure Code", "Lot No.");
+        BinContent.SetRange("Location Code", Rec."Location Code");
+        BinContent.SetRange("Item No.", Rec."Item No.");
+        BinContent.SetRange("Variant Code", Rec."Variant Code");
+        BinContent.SetRange("Unit of Measure Code", Rec."Unit of Measure Code");
+        BinContent.SetRange("Lot No.", Rec."Lot No.");
+        if BinContent.FindSet() then
+            repeat
+                txtBinCode += '|' + BinContent."Bin Code";
+                CalcQtyAvailToTakeUOM += BinContent.CalcQtyAvailToTakeUOM();
+            until BinContent.Next() = 0;
+
+        if StrLen(txtBinCode) > 0 then
+            BinCode := CopyStr(txtBinCode, 2, MaxStrLen(BinCode) + 1);
+    end;
 }

@@ -15,16 +15,17 @@ codeunit 50011 "Item Tracking Mgt."
         ItemTrackingCode: Record "Item Tracking Code";
     begin
         GetLocation(CalcItemLedgEntry.GetFilter("Location Code"));
-        if Location."Pick According to FEFO" then begin
+        if Location."Pick According to FEFO"
+        and Location."Expired Items Not Reserve" then begin
             CalcItemLedgEntry.SetCurrentKey("Item No.", Open, "Variant Code", Positive, "Location Code", "Expiration Date");
             if Item.get(CalcItemLedgEntry.GetFilter("Item No."))
                 and (Item."Item Tracking Code" <> '')
                 and ItemTrackingCode.Get(Item."Item Tracking Code")
                 and ItemTrackingCode."Strict Expiration Posting" then
-                CalcItemLedgEntry.SetFilter("Expiration Date", '%1..', Today);
+                CalcItemLedgEntry.SetFilter("Expiration Date", '%1..', DT2Date(CurrentDateTime));
             InvSearch := '-';
             IsFound := CalcItemLedgEntry.FIND(InvSearch);
-            IsHandled := true;
+            IsHandled := IsFound;
         end;
     end;
 
@@ -297,8 +298,7 @@ codeunit 50011 "Item Tracking Mgt."
         end;
     end;
 
-    local procedure CreateBinCodeFilter(var BinCodeFilter: Text[1024];
-ToBinCode: Code[20])
+    local procedure CreateBinCodeFilter(var BinCodeFilter: Text[1024]; ToBinCode: Code[20])
     begin
         BinCodeFilter := ToBinCode + '|';
         BinCodeFilter := CopyStr(BinCodeFilter, 1, StrLen(BinCodeFilter) - 1);
