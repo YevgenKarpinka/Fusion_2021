@@ -40,18 +40,18 @@ codeunit 50007 "Find Same Lot No"
     [EventSubscriber(ObjectType::Codeunit, Codeunit::"Whse. Jnl.-Register Line", 'OnAfterInsertWhseEntry', '', true, true)]
     local procedure RegisterWhseJnlOnAfterInsertWhseEntry(var WarehouseEntry: Record "Warehouse Entry")
     var
+        Bin: Record Bin;
         BinContent: Record "Bin Content";
     begin
-        if BinContent.Get(WarehouseEntry."Location Code", WarehouseEntry."Bin Code", WarehouseEntry."Item No.",
+        if Bin.Get(WarehouseEntry."Location Code", WarehouseEntry."Bin Code")
+        and BinContent.Get(WarehouseEntry."Location Code", WarehouseEntry."Bin Code", WarehouseEntry."Item No.",
                         WarehouseEntry."Variant Code", WarehouseEntry."Unit of Measure Code") then begin
-            BinContent.CalcFields("Quantity (Base)");
-            if BinContent."Quantity (Base)" > 0 then begin
-                BinContent."Lot No." := WarehouseEntry."Lot No.";
-                BinContent.Modify();
-            end else begin
+            if Bin.Empty then begin
                 BinContent."Lot No." := '';
-                BinContent.Modify();
+            end else begin
+                BinContent."Lot No." := WarehouseEntry."Lot No.";
             end;
+            BinContent.Modify();
         end;
     end;
 

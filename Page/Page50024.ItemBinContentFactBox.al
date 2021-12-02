@@ -66,35 +66,35 @@ page 50024 "Item Bin Content FactBox"
         Rec.SetFilter("Bin Type Code", BinTypeFilter);
     end;
 
-    trigger OnFindRecord(Which: Text): Boolean
-    var
-        NextRecNotFound: Boolean;
-    begin
-        if not Rec.Find(Which) then
-            exit(false);
+    // trigger OnFindRecord(Which: Text): Boolean
+    // var
+    //     NextRecNotFound: Boolean;
+    // begin
+    //     if not Rec.Find(Which) then
+    //         exit(false);
 
-        if ShowRecord() then
-            exit(true);
+    //     if ShowRecord() then
+    //         exit(true);
 
-        repeat
-            NextRecNotFound := Rec.Next <= 0;
-            if ShowRecord() then
-                exit(true);
-        until NextRecNotFound;
+    //     repeat
+    //         NextRecNotFound := Rec.Next <= 0;
+    //         if ShowRecord() then
+    //             exit(true);
+    //     until NextRecNotFound;
 
-        exit(false);
-    end;
+    //     exit(false);
+    // end;
 
-    trigger OnNextRecord(Steps: Integer): Integer
-    var
-        NewStepCount: Integer;
-    begin
-        repeat
-            NewStepCount := Rec.Next(Steps);
-        until (NewStepCount = 0) or ShowRecord();
+    // trigger OnNextRecord(Steps: Integer): Integer
+    // var
+    //     NewStepCount: Integer;
+    // begin
+    //     repeat
+    //         NewStepCount := Rec.Next(Steps);
+    //     until (NewStepCount = 0) or ShowRecord();
 
-        exit(NewStepCount);
-    end;
+    //     exit(NewStepCount);
+    // end;
 
     trigger OnAfterGetRecord()
     begin
