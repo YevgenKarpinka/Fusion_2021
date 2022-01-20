@@ -6,8 +6,8 @@ tableextension 50011 "Bin Content Ext." extends "Bin Content"
         {
             DataClassification = CustomerContent;
             CaptionML = ENU = 'Lot No.', RUS = 'Номер партии';
-            Editable = false;
-            TableRelation = "Warehouse Entry"."Lot No." WHERE("Location Code" = FIELD("Location Code"), "Bin Code" = FIELD("Bin Code"), "Item No." = FIELD("Item No."), "Variant Code" = FIELD("Variant Code"), "Unit of Measure Code" = FIELD("Unit of Measure Code"), "Lot No." = FIELD("Lot No. Filter"), "Serial No." = FIELD("Serial No. Filter"));
+            // Editable = false;
+            // TableRelation = "Warehouse Entry"."Lot No." WHERE("Location Code" = FIELD("Location Code"), "Bin Code" = FIELD("Bin Code"), "Item No." = FIELD("Item No."), "Variant Code" = FIELD("Variant Code"), "Unit of Measure Code" = FIELD("Unit of Measure Code"), "Lot No." = FIELD("Lot No. Filter"), "Serial No." = FIELD("Serial No. Filter"));
         }
     }
 

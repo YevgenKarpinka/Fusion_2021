@@ -14,15 +14,17 @@ codeunit 50008 "Upgrade Bin Content"
         BinContent.SetRange("Lot No.", '');
         if BinContent.FindSet(true, false) then
             repeat
-                if BinConMod.Get(BinContent."Location Code", BinContent."Bin Code", BinContent."Item No.",
-                        BinContent."Variant Code", BinContent."Unit of Measure Code") then begin
-                    LotNo := GetLotNoFromWhseEntry(BinContent."Location Code", BinContent."Bin Code",
-                            BinContent."Item No.", BinContent."Variant Code", BinContent."Unit of Measure Code");
-                    if LotNo <> '' then begin
-                        BinConMod.Validate("Lot No.", LotNo);
-                        BinConMod.Modify();
+                BinContent.CalcFields("Quantity (Base)");
+                if BinContent."Quantity (Base)" <> 0 then
+                    if BinConMod.Get(BinContent."Location Code", BinContent."Bin Code", BinContent."Item No.",
+                            BinContent."Variant Code", BinContent."Unit of Measure Code") then begin
+                        LotNo := GetLotNoFromWhseEntry(BinContent."Location Code", BinContent."Bin Code",
+                                BinContent."Item No.", BinContent."Variant Code", BinContent."Unit of Measure Code");
+                        if LotNo <> '' then begin
+                            BinConMod.Validate("Lot No.", LotNo);
+                            BinConMod.Modify();
+                        end;
                     end;
-                end;
             until BinContent.Next() = 0;
     end;
 
