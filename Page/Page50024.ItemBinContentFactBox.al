@@ -99,9 +99,13 @@ page 50024 "Item Bin Content FactBox"
     trigger OnAfterGetRecord()
     begin
         ClearAll();
-        WhseEntry.SetCurrentKey("Bin Code");
+        WhseEntry.SetCurrentKey("Entry No.", "Bin Code", "Item No.", "Location Code", "Unit of Measure Code", "Variant Code");
         WhseEntry.SetRange("Bin Code", Rec."Bin Code");
-        if WhseEntry.FindFirst() then;
+        WhseEntry.SetRange("Item No.", Rec."Item No.");
+        WhseEntry.SetRange("Location Code", Rec."Location Code");
+        WhseEntry.SetRange("Unit of Measure Code", Rec."Unit of Measure Code");
+        WhseEntry.SetRange("Variant Code", Rec."Variant Code");
+        if WhseEntry.FindLast() then;
     end;
 
     local procedure ShowRecord(): Boolean
