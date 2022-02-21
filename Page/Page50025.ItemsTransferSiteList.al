@@ -4,6 +4,7 @@ page 50025 "Items Transfer Site List"
     ApplicationArea = All;
     UsageCategory = Administration;
     SourceTable = "Item Transfer Site";
+    InsertAllowed = false;
     // Editable = false;
     CaptionML = ENU = 'Items Transfer Site List',
                 RUS = 'Items Transfer Site List';

@@ -1132,6 +1132,7 @@ codeunit 50001 "ShipStation Mgt."
         jsonInsurance: JsonObject;
         jsonInternational: JsonObject;
         jsonInsuranceOptions: JsonObject;
+        shipByDate: Date;
     begin
 
         if GetJSToken(_JSObject, 'carrierCode').AsValue().IsNull then
@@ -1147,7 +1148,13 @@ codeunit 50001 "ShipStation Mgt."
         // to do end
         JSObjectHeader.Add('packageCode', GetJSToken(_JSObject, 'packageCode').AsValue().AsText());
         JSObjectHeader.Add('confirmation', GetJSToken(_JSObject, 'confirmation').AsValue().AsText());
+
+        // if not Evaluate(shipByDate, GetJSToken(_JSObject, 'shipByDate').AsValue().AsText())
+        // or (shipByDate < Today) then
         JSObjectHeader.Add('shipDate', Date2Text4SS(Today));
+        // else
+        //     JSObjectHeader.Add('shipDate', GetJSToken(_JSObject, 'shipByDate').AsValue().AsText());
+
         JSObjectHeader.Add('weight', GetJSToken(_JSObject, 'weight').AsObject());
 
         jsonInsurance := GetJSToken(_JSObject, 'insuranceOptions').AsObject();
