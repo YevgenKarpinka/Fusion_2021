@@ -1087,6 +1087,28 @@ codeunit 50001 "ShipStation Mgt."
         DocumentAttachment.DeleteAll();
     end;
 
+    procedure DeleteAttachmentFromOrder(SalesOrderNo: Code[20]; _FileName: Text[250])
+    var
+        DocumentAttachment: Record "Document Attachment";
+        SalesHeader: Record "Sales Header";
+        _RecordRef: RecordRef;
+        _FieldRef: FieldRef;
+        RecNo: Code[20];
+    begin
+        if not SalesHeader.Get(SalesHeader."Document Type"::Order, SalesOrderNo) then exit;
+        _RecordRef.OPEN(DATABASE::"Sales Header");
+        _RecordRef.GETTABLE(SalesHeader);
+
+        _FieldRef := _RecordRef.Field(3);
+        RecNo := _FieldRef.Value;
+
+        DocumentAttachment.SetCurrentKey("Table ID", "No.", "File Name");
+        DocumentAttachment.SetRange("Table ID", _RecordRef.Number);
+        DocumentAttachment.SetRange("No.", RecNo);
+        DocumentAttachment.SetRange("File Name", _FileName);
+        DocumentAttachment.DeleteAll();
+    end;
+
     [EventSubscriber(ObjectType::Page, 1174, 'OnBeforeDrillDown', '', true, true)]
     local procedure BeforeDrillDownSetFilters(DocumentAttachment: Record "Document Attachment"; var RecRef: RecordRef)
     var
