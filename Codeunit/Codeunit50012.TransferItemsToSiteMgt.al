@@ -29,29 +29,28 @@ codeunit 50012 "Transfer Items To Site Mgt"
 
         if ItemTransferList.FindSet() then
             repeat
-                _jsonItem := ShipStationMgt.CreateJsonItemForWooComerse(ItemTransferList."Item No.");
+                    _jsonItem := ShipStationMgt.CreateJsonItemForWooComerse(ItemTransferList."Item No.");
                 Counter += 1;
-
-                if _jsonItem.Get('SKU', _jsonToken) then begin
+                if _jsonItem.Get('SKU', _jsonToken) then
                     _jsonItemList.Add(_jsonItem);
 
-                    if ((Counter mod 300) = 0) or (Counter = TotalCount) then begin
-                        _jsonItemList.WriteTo(_jsonText);
+                if ((Counter mod 300) = 0) or (Counter = TotalCount) then begin
+                    _jsonItemList.Add(_jsonItem);
 
-                        IsSuccessStatusCode := true;
-                        ShipStationMgt.Connector2eShop(_jsonText, IsSuccessStatusCode, responseText, 'ADDPRODUCT2ESHOP');
-                        if not IsSuccessStatusCode then begin
-                            _jsonErrorItemList.Add(_jsonItem);
-                            _jsonItem.ReadFrom(responseText);
-                            _jsonErrorItemList.Add(_jsonItem);
-                        end;
-                        Clear(_jsonItemList);
-                        if IsSuccessStatusCode then
-                            Commit();
+                    _jsonItemList.WriteTo(_jsonText);
+
+                    IsSuccessStatusCode := true;
+                    ShipStationMgt.Connector2eShop(_jsonText, IsSuccessStatusCode, responseText, 'ADDPRODUCT2ESHOP');
+                    if not IsSuccessStatusCode then begin
+                        _jsonErrorItemList.Add(_jsonItem);
+                        _jsonItem.ReadFrom(responseText);
+                        _jsonErrorItemList.Add(_jsonItem);
                     end;
-                    DeleteItemForTransferToSite(ItemTransferList."Item No.");
-
+                    Clear(_jsonItemList);
+                    if IsSuccessStatusCode then
+                        Commit();
                 end;
+                DeleteItemForTransferToSite(ItemTransferList."Item No.");
             until ItemTransferList.Next() = 0;
         GetGLSetup();
         if (_jsonErrorItemList.Count > 0)
@@ -68,10 +67,10 @@ codeunit 50012 "Transfer Items To Site Mgt"
         ItemModify.SetFilter("No.", ItemNoFilter);
         if ItemModify.FindSet(false, true) then
             repeat
-                if ItemModify."Web Item" then begin
-                    ItemModify."Transfered to eShop" := false;
-                    ItemModify.Modify();
-                end;
+                    if ItemModify."Web Item" then begin
+                        ItemModify."Transfered to eShop" := false;
+                        ItemModify.Modify();
+                    end;
             until ItemModify.Next() = 0;
     end;
 
@@ -83,7 +82,7 @@ codeunit 50012 "Transfer Items To Site Mgt"
         ItemForTransfer.SetRange("Web Item", true);
         if ItemForTransfer.FindSet() then
             repeat
-                AddItemForTransferToSite(ItemForTransfer."No.");
+                    AddItemForTransferToSite(ItemForTransfer."No.");
             until ItemForTransfer.Next() = 0;
     end;
 
@@ -98,12 +97,12 @@ codeunit 50012 "Transfer Items To Site Mgt"
         ItemForTransfer.SetFilter("No.", ItemNoFilter);
         if ItemForTransfer.FindSet() then
             repeat
-                if ItemForTransfer."Web Item" then
-                    if not ItemTransferList.Get(ItemForTransfer."No.") then begin
-                        ItemTransferList.Init();
-                        ItemTransferList."Item No." := ItemForTransfer."No.";
-                        ItemTransferList.Insert();
-                    end;
+                    if ItemForTransfer."Web Item" then
+                        if not ItemTransferList.Get(ItemForTransfer."No.") then begin
+                            ItemTransferList.Init();
+                            ItemTransferList."Item No." := ItemForTransfer."No.";
+                            ItemTransferList.Insert();
+                        end;
             until ItemForTransfer.Next() = 0;
     end;
 
@@ -133,9 +132,9 @@ codeunit 50012 "Transfer Items To Site Mgt"
         PurchLine.SetRange(Type, PurchLine.Type::Item);
         PurchLine.SetFilter(Quantity, '<>%1', 0);
         if PurchLine.FindSet() then begin
-            repeat
-                ItemNoFilter += '|' + PurchLine."No.";
-            until PurchLine.Next() = 0;
+                                        repeat
+                                            ItemNoFilter += '|' + PurchLine."No.";
+                                        until PurchLine.Next() = 0;
             ItemNoFilter := CopyStr(ItemNoFilter, 2, StrLen(ItemNoFilter));
             GetGLSetup();
             if not GLSetup."Transfer Items Job Queue Only" then
@@ -159,9 +158,9 @@ codeunit 50012 "Transfer Items To Site Mgt"
         SalesLine.SetRange(Type, SalesLine.Type::Item);
         SalesLine.SetFilter(Quantity, '<>%1', 0);
         if SalesLine.FindSet() then begin
-            repeat
-                ItemNoFilter += '|' + SalesLine."No.";
-            until SalesLine.Next() = 0;
+                                        repeat
+                                            ItemNoFilter += '|' + SalesLine."No.";
+                                        until SalesLine.Next() = 0;
             ItemNoFilter := CopyStr(ItemNoFilter, 2, StrLen(ItemNoFilter));
             GetGLSetup();
             if not GLSetup."Transfer Items Job Queue Only" then
@@ -241,12 +240,11 @@ codeunit 50012 "Transfer Items To Site Mgt"
         TotalCount := _Item.Count;
 
         if _Item.FindSet() then
-            repeat
-                _jsonItem := ShipStationMgt.CreateJsonItemForWooComerse(_Item."No.");
-                Counter += 1;
-                if _jsonItem.Get('SKU', _jsonToken) then begin
-                    _jsonItemList.Add(_jsonItem);
-
+                repeat
+                    _jsonItem := ShipStationMgt.CreateJsonItemForWooComerse(_Item."No.");
+                    Counter += 1;
+                    if _jsonItem.Get('SKU', _jsonToken) then
+                        _jsonItemList.Add(_jsonItem);
 
                     if ((Counter mod 50) = 0) or (Counter = TotalCount) then begin
                         _jsonItemList.WriteTo(_jsonText);
@@ -260,8 +258,7 @@ codeunit 50012 "Transfer Items To Site Mgt"
                         end;
                         Clear(_jsonItemList);
                     end;
-                end;
-            until _Item.Next() = 0;
+                until _Item.Next() = 0;
 
         GetGLSetup();
         if (_jsonErrorItemList.Count > 0)

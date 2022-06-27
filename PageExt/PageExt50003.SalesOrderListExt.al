@@ -52,9 +52,9 @@ pageextension 50003 "Sales Order List Ext." extends "Sales Order List"
                     _SalesHeader := Rec;
                     CurrPage.SETSELECTIONFILTER(_SalesHeader);
                     if _SalesHeader.FindSet(false, false) then
-                        repeat
-                            ReleaseSalesDoc.PerformManualRelease(_SalesHeader);
-                        until _SalesHeader.Next() = 0;
+                            repeat
+                                ReleaseSalesDoc.PerformManualRelease(_SalesHeader);
+                            until _SalesHeader.Next() = 0;
                 end;
             }
             action("Bulk ReOpen")
@@ -71,9 +71,9 @@ pageextension 50003 "Sales Order List Ext." extends "Sales Order List"
                     _SalesHeader := Rec;
                     CurrPage.SETSELECTIONFILTER(_SalesHeader);
                     if _SalesHeader.FindSet(false, false) then
-                        repeat
-                            ReleaseSalesDoc.PerformManualReopen(_SalesHeader);
-                        until _SalesHeader.Next() = 0;
+                            repeat
+                                ReleaseSalesDoc.PerformManualReopen(_SalesHeader);
+                            until _SalesHeader.Next() = 0;
                 end;
             }
         }
@@ -101,6 +101,7 @@ pageextension 50003 "Sales Order List Ext." extends "Sales Order List"
             {
                 CaptionML = ENU = 'ShipStation', RUS = 'ShipStation';
                 Image = ReleaseShipment;
+                Visible = false;
 
                 action("Create Orders")
                 {
@@ -121,9 +122,9 @@ pageextension 50003 "Sales Order List Ext." extends "Sales Order List"
                         _SH.SetRange(Status, _SH.Status::Released);
                         _SH.SetFilter("ShipStation Shipment ID", '=%1', '');
                         if _SH.FindSet(false, false) then begin
-                            repeat
-                                ShipStationMgt.CreateOrderInShipStation(_SH."No.");
-                            until _SH.Next() = 0;
+                                                              repeat
+                                                                  ShipStationMgt.CreateOrderInShipStation(_SH."No.");
+                                                              until _SH.Next() = 0;
                             Message(lblOrdersCreated);
                             exit;
                         end;
@@ -150,10 +151,10 @@ pageextension 50003 "Sales Order List Ext." extends "Sales Order List"
                         _SH.SetFilter("ShipStation Order ID", '<>%1', '');
                         _SH.SetFilter("ShipStation Shipment ID", '=%1', '');
                         if _SH.FindSet(false, false) then begin
-                            repeat
-                                if _SH."ShipStation Order Key" <> '' then
-                                    ShipStationMgt.CreateLabel2OrderInShipStation(_SH."No.");
-                            until _SH.Next() = 0;
+                                                              repeat
+                                                                  if _SH."ShipStation Order Key" <> '' then
+                                                                      ShipStationMgt.CreateLabel2OrderInShipStation(_SH."No.");
+                                                              until _SH.Next() = 0;
                             Message(lblLabelsCreated);
                             exit;
                         end;
@@ -178,9 +179,9 @@ pageextension 50003 "Sales Order List Ext." extends "Sales Order List"
                         _SH.SetFilter("ShipStation Shipment ID", '<>%1', '');
                         _SH.SetFilter("ShipStation Order ID", '<>%1', '');
                         if _SH.FindSet(false, false) then begin
-                            repeat
-                                ShipStationMgt.VoidLabel2OrderInShipStation(_SH."No.");
-                            until _SH.Next() = 0;
+                                                              repeat
+                                                                  ShipStationMgt.VoidLabel2OrderInShipStation(_SH."No.");
+                                                              until _SH.Next() = 0;
                             Message(lblLabelsVoided);
                             exit;
                         end;

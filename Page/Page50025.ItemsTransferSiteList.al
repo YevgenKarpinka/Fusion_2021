@@ -2,10 +2,10 @@ page 50025 "Items Transfer Site List"
 {
     PageType = List;
     ApplicationArea = All;
-    UsageCategory = Administration;
+    UsageCategory = History;
     SourceTable = "Item Transfer Site";
     InsertAllowed = false;
-    // Editable = false;
+    Editable = false;
     CaptionML = ENU = 'Items Transfer Site List',
                 RUS = 'Items Transfer Site List';
 

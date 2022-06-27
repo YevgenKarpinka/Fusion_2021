@@ -26,7 +26,7 @@ codeunit 50001 "ShipStation Mgt."
         SalesLine.SetRange("Document No.", OrderNo);
         if SalesLine.FindSet() then
             repeat
-                positionGrossWeight += SalesLine.Quantity * SalesLine."Gross Weight";
+                    positionGrossWeight += SalesLine.Quantity * SalesLine."Gross Weight";
             until SalesLine.Next() = 0;
         exit(positionGrossWeight);
     end;
@@ -396,7 +396,7 @@ codeunit 50001 "ShipStation Mgt."
         jsonTagsArray: JsonArray;
     begin
         GetShipStationSetup();
-        if not glShipStationSetup."ShipStation Integration Enable" then exit;
+        if glShipStationSetup."ShipStation Integration Enable" <> glShipStationSetup."ShipStation Integration Enable"::"Sales Order" then exit;
 
         if (DocNo = '') or (not _SH.Get(_SH."Document Type"::Order, DocNo)) then exit(false);
 
@@ -622,18 +622,18 @@ codeunit 50001 "ShipStation Mgt."
     begin
         _ItemFilterGroup.SetRange("Item No.", _ItemNo);
         if _ItemFilterGroup.FindSet(false, false) then
-            repeat
-                if _oldItemFilterGroup <> _ItemFilterGroup."Filter Group" then begin
-                    _jsonItemFilterGroup.Add('name', _ItemFilterGroup."Filter Group");
-                    _jsonItemFilterGroup.Add('name_ru', _ItemFilterGroup."Filter Group RUS"); // added 11/09/2020 >>
-                    _jsonItemFilterGroup.Add('filters', AddItemFilterGroupArray(_ItemFilterGroup."Item No.", _ItemFilterGroup."Filter Group"));
-                    _jsonItemFilterGroup.Add('filters_ru', AddItemFilterGroupRUSArray(_ItemFilterGroup."Item No.", _ItemFilterGroup."Filter Group")); // added 11/09/2020 >>
-                    _jsonItemFilterGroupArray.Add(_jsonItemFilterGroup);
-                    _jsonItemFilters.Add(_jsonItemFilterGroup);
-                    Clear(_jsonItemFilterGroup);
-                    _oldItemFilterGroup := _ItemFilterGroup."Filter Group";
-                end;
-            until _ItemFilterGroup.Next() = 0;
+                repeat
+                    if _oldItemFilterGroup <> _ItemFilterGroup."Filter Group" then begin
+                        _jsonItemFilterGroup.Add('name', _ItemFilterGroup."Filter Group");
+                        _jsonItemFilterGroup.Add('name_ru', _ItemFilterGroup."Filter Group RUS"); // added 11/09/2020 >>
+                        _jsonItemFilterGroup.Add('filters', AddItemFilterGroupArray(_ItemFilterGroup."Item No.", _ItemFilterGroup."Filter Group"));
+                        _jsonItemFilterGroup.Add('filters_ru', AddItemFilterGroupRUSArray(_ItemFilterGroup."Item No.", _ItemFilterGroup."Filter Group")); // added 11/09/2020 >>
+                        _jsonItemFilterGroupArray.Add(_jsonItemFilterGroup);
+                        _jsonItemFilters.Add(_jsonItemFilterGroup);
+                        Clear(_jsonItemFilterGroup);
+                        _oldItemFilterGroup := _ItemFilterGroup."Filter Group";
+                    end;
+                until _ItemFilterGroup.Next() = 0;
         exit(_jsonItemFilters);
     end;
 
@@ -645,9 +645,9 @@ codeunit 50001 "ShipStation Mgt."
         _ItemFilterGroup.SetRange("Item No.", _ItemNo);
         _ItemFilterGroup.SetRange("Filter Group", _FilterGroup);
         if _ItemFilterGroup.FindSet(false, false) then
-            repeat
-                _jsonItemFilterGroupArray.Add(_ItemFilterGroup."Filter Value");
-            until _ItemFilterGroup.Next() = 0;
+                repeat
+                    _jsonItemFilterGroupArray.Add(_ItemFilterGroup."Filter Value");
+                until _ItemFilterGroup.Next() = 0;
         exit(_jsonItemFilterGroupArray);
     end;
 
@@ -660,7 +660,7 @@ codeunit 50001 "ShipStation Mgt."
         _ItemFilterGroup.SetRange("Filter Group", _FilterGroup);
         if _ItemFilterGroup.FindSet(false, false) then
             repeat
-                _jsonItemFilterGroupArray.Add(_ItemFilterGroup."Filter Value RUS");
+                    _jsonItemFilterGroupArray.Add(_ItemFilterGroup."Filter Value RUS");
             until _ItemFilterGroup.Next() = 0;
         exit(_jsonItemFilterGroupArray);
     end;
@@ -673,9 +673,9 @@ codeunit 50001 "ShipStation Mgt."
         _ItemFilterGroup.SetRange("Item No.", _ItemNo);
         _ItemFilterGroup.SetRange("Filter Group", _FilterGroup);
         if _ItemFilterGroup.FindSet(false, false) then
-            repeat
-                _jsonItemFilterGroupArray.Add(_ItemFilterGroup."Filter Value RUS");
-            until _ItemFilterGroup.Next() = 0;
+                repeat
+                    _jsonItemFilterGroupArray.Add(_ItemFilterGroup."Filter Value RUS");
+                until _ItemFilterGroup.Next() = 0;
         exit(_jsonItemFilterGroupArray);
     end;
 
@@ -854,7 +854,7 @@ codeunit 50001 "ShipStation Mgt."
         errorShipStationOrderNotExist: TextConst ENU = 'ShipStation Order is not Existed!';
     begin
         GetShipStationSetup();
-        if not glShipStationSetup."ShipStation Integration Enable" then exit;
+        if glShipStationSetup."ShipStation Integration Enable" <> glShipStationSetup."ShipStation Integration Enable"::"Sales Order" then exit;
 
         if (DocNo = '') or (not _SH.Get(_SH."Document Type"::Order, DocNo)) or (_SH."ShipStation Order ID" = '') then Error(errorShipStationOrderNotExist);
         // comment to test Create Label and Attache to Warehouse Shipment
@@ -910,7 +910,7 @@ codeunit 50001 "ShipStation Mgt."
         _txtBefore: Text;
     begin
         GetShipStationSetup();
-        if not glShipStationSetup."ShipStation Integration Enable" then exit;
+        if glShipStationSetup."ShipStation Integration Enable" <> glShipStationSetup."ShipStation Integration Enable"::"Sales Order" then exit;
 
         if (DocNo = '') or (not _SH.Get(_SH."Document Type"::Order, DocNo)) or (_SH."ShipStation Shipment ID" = '') then exit(false);
 
@@ -1013,8 +1013,8 @@ codeunit 50001 "ShipStation Mgt."
                     DocumentAttachment.Validate("Document Type", RecType);
                 end;
             else begin
-                    RecNo := RecRef.Field(1).Value;
-                end;
+                RecNo := RecRef.Field(1).Value;
+            end;
 
         end;
 
@@ -1055,13 +1055,13 @@ codeunit 50001 "ShipStation Mgt."
         fromDocumentAttachment.SetRange("Table ID", DATABASE::"Warehouse Shipment Header");
         fromDocumentAttachment.SetRange("No.", WarehouseShipmentLine."No.");
         if fromDocumentAttachment.FindSet() then begin
-            repeat
-                toDocumentAttachment.Get(fromDocumentAttachment."Table ID", fromDocumentAttachment."No.",
-                                         fromDocumentAttachment."Document Type", fromDocumentAttachment."Line No.", fromDocumentAttachment.ID);
-                toDocumentAttachment."Table ID" := DATABASE::"Sales Shipment Header";
-                toDocumentAttachment."No." := PostedSalesShipHeader."No.";
-                toDocumentAttachment.Modify();
-            until fromDocumentAttachment.Next() = 0;
+                                                     repeat
+                                                         toDocumentAttachment.Get(fromDocumentAttachment."Table ID", fromDocumentAttachment."No.",
+                                                                                  fromDocumentAttachment."Document Type", fromDocumentAttachment."Line No.", fromDocumentAttachment.ID);
+                                                         toDocumentAttachment."Table ID" := DATABASE::"Sales Shipment Header";
+                                                         toDocumentAttachment."No." := PostedSalesShipHeader."No.";
+                                                         toDocumentAttachment.Modify();
+                                                     until fromDocumentAttachment.Next() = 0;
         end;
     end;
 
@@ -1303,7 +1303,7 @@ codeunit 50001 "ShipStation Mgt."
         _SL.SetFilter(Quantity, '<>%1', 0);
         if _SL.FindSet(false, false) then
             repeat
-                Clear(JSObjectLine);
+                    Clear(JSObjectLine);
 
                 JSObjectLine.Add('lineItemKey', _SL."Line No.");
                 JSObjectLine.Add('sku', _SL."No.");
@@ -1629,7 +1629,7 @@ codeunit 50001 "ShipStation Mgt."
         _SL.SetRange("Document No.", SalesHeader."No.");
         if _SL.FindSet(false, false) then
             repeat
-                TotalGrossWeight += _SL.Quantity * _SL."Gross Weight";
+                    TotalGrossWeight += _SL.Quantity * _SL."Gross Weight";
             until _SL.Next() = 0;
         exit(TotalGrossWeight);
     end;
@@ -1664,7 +1664,7 @@ codeunit 50001 "ShipStation Mgt."
         _SA.SetFilter("SS Code", '<>%1', '');
         if _SA.FindSet() then
             repeat
-                jsObject.Add('carrierCode', _SA."SS Code");
+                    jsObject.Add('carrierCode', _SA."SS Code");
                 jsObject.Add('fromPostalCode', GetFromPostalCode(_SH."Location Code"));
                 jsObject.Add('toCountry', _SH."Sell-to Country/Region Code");
                 jsObject.Add('toPostalCode', _SH."Sell-to Post Code");
@@ -1746,10 +1746,24 @@ codeunit 50001 "ShipStation Mgt."
         exit('');
     end;
 
-    procedure CreateDeliverySalesLine(SalesOrderNo: Code[20]; customerNo: Code[20])
+    procedure CreateDeliverySalesLine(SalesOrderNo: Code[20])
+    var
+        SalesHeader: Record "Sales Header";
     begin
-        ICExtended.CreateDeliverySalesLine(SalesOrderNo, customerNo);
-        ICExtended.CreateItemChargeAssgnt(SalesOrderNo, customerNo);
+        GetShipStationSetup();
+
+        if not glShipStationSetup."Insert Item Charge On Release" then begin
+            glShipStationSetup.TestField("Posting Type Shipment Cost", glShipStationSetup."Posting Type Shipment Cost"::"Charge (Item)");
+            glShipStationSetup.TestField("Sales No. Shipment Cost");
+        end else
+            exit;
+
+        if (not SalesHeader.Get(SalesHeader."Document Type"::Order, SalesOrderNo))
+            or (SalesHeader."ShipStation Shipment Amount" = 0) then
+            exit;
+
+        ICExtended.CreateDeliverySalesLine(SalesOrderNo);
+        ICExtended.CreateItemChargeAssgnt(SalesOrderNo);
     end;
 
     var

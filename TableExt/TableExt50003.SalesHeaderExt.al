@@ -70,6 +70,12 @@ tableextension 50003 "Sales Header Ext." extends "Sales Header"
             DataClassification = CustomerContent;
             CaptionML = ENU = 'ShipStation Package', RUS = 'Пакет ShipStation';
         }
+        field(50013; "State TAX Amount"; Decimal)
+        {
+            DataClassification = CustomerContent;
+            CaptionML = ENU = 'State TAX Amount', RUS = 'НДС Штата Сумма';
+            DecimalPlaces = 0 : 5;
+        }
     }
 
     keys

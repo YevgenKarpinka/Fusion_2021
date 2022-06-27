@@ -104,6 +104,16 @@ page 50010 "APIV2 - Sales Orders"
                         RegisterFieldSet(Rec.FIELDNO("ShipStation Shipment Amount"));
                     end;
                 }
+                field(stateTAXAmount; Rec."State TAX Amount")
+                {
+                    ApplicationArea = All;
+                    Caption = 'stateTAXAmount', Locked = true;
+
+                    trigger OnValidate()
+                    begin
+                        RegisterFieldSet(Rec.FIELDNO("State TAX Amount"));
+                    end;
+                }
                 field(shippingPostalAddress; ShippingPostalAddressJSONText)
                 {
                     ApplicationArea = All;

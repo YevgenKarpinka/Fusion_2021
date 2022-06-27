@@ -9,7 +9,7 @@ codeunit 50006 "IC Extended"
 
     end;
 
-    [EventSubscriber(ObjectType::Table, 37, 'OnAfterUpdateAmountsDone', '', false, false)]
+    [EventSubscriber(ObjectType::Table, DataBase::"Sales Line", 'OnAfterUpdateAmountsDone', '', false, false)]
     local procedure ChangeItemAllowed(var SalesLine: Record "Sales Line"; var xSalesLine: Record "Sales Line"; CurrentFieldNo: Integer)
     var
         _PurchaseOrderNo: Code[20];
@@ -139,7 +139,7 @@ codeunit 50006 "IC Extended"
             _ICSalesHeader.SetRange("External Document No.", _PurchaseOrderNo);
             if _ICSalesHeader.FindSet(false, false) then
                 repeat
-                    _ICSalesHeaderForDelete.ChangeCompany(_ICPartner."Inbox Details");
+                        _ICSalesHeaderForDelete.ChangeCompany(_ICPartner."Inbox Details");
                     _ICSalesHeaderForDelete.Get(_ICSalesHeader."Document Type"::Order, _ICSalesHeader."No.");
                     _ICSalesHeaderForDelete."External Document No." := '';
                     _ICSalesHeaderForDelete.Modify();
@@ -151,12 +151,12 @@ codeunit 50006 "IC Extended"
         _PurchHeader.SetRange("IC Document No.", _SalesHeaderNo);
         _PurchHeader.SetRange("Document Type", _PurchHeader."Document Type"::Order);
         if _PurchHeader.FindSet(false, false) then
-            repeat
-                _PurchHeaderForDelete.Get(_PurchHeader."Document Type"::Order, _PurchHeader."No.");
-                _PurchHeaderForDelete."IC Document No." := '';
-                _PurchHeaderForDelete.Modify();
-                _PurchHeaderForDelete.Delete(true);
-            until _PurchHeader.Next() = 0;
+                repeat
+                    _PurchHeaderForDelete.Get(_PurchHeader."Document Type"::Order, _PurchHeader."No.");
+                    _PurchHeaderForDelete."IC Document No." := '';
+                    _PurchHeaderForDelete.Modify();
+                    _PurchHeaderForDelete.Delete(true);
+                until _PurchHeader.Next() = 0;
     end;
 
     procedure FoundICSalesOrder(purchaseOrderNo: Code[20]; var _ICSalesOrderNo: Code[20]; var _PostedICSalesInvoiceNo: Code[20])
@@ -253,27 +253,23 @@ codeunit 50006 "IC Extended"
         end;
     end;
 
-    procedure CreateItemChargeAssgnt(_salesOrderNo: Code[20]; _customerNo: Code[20])
+    procedure CreateItemChargeAssgnt(_salesOrderNo: Code[20])
     var
         _salesHeader: Record "Sales Header";
         _salesLine: Record "Sales Line";
-        _customer: Record Customer;
+        // _customer: Record Customer;
         _currency: Record Currency;
         _itemChargeAssgntSales: Record "Item Charge Assignment (Sales)";
         _itemChargeAssgntLineAmt: Decimal;
         _assignItemChargeSales: Codeunit "Item Charge Assgnt. (Sales)";
     begin
-        if not _salesHeader.Get(_salesHeader."Document Type"::Order, _salesOrderNo) then exit;
-        if not _customer.Get(_customerNo)
-            or (_customer."Sales No. Shipment Cost" = '')
-            or (_customer."Posting Type Shipment Cost" <> _customer."Posting Type Shipment Cost"::"Charge (Item)") then
-            exit;
+        GetShipStationSetup();
 
         _salesLine.SetCurrentKey(Type);
         _salesLine.SetRange("Document Type", _salesHeader."Document Type");
         _salesLine.SetRange("Document No.", _salesHeader."No.");
-        _salesLine.SetRange(Type, _salesLine.Type::"Charge (Item)");
-        _salesLine.SetRange("No.", _customer."Sales No. Shipment Cost");
+        _salesLine.SetRange(Type, glShipStationSetup."Posting Type Shipment Cost"::"Charge (Item)");
+        _salesLine.SetRange("No.", glShipStationSetup."Sales No. Shipment Cost");
         if not _salesLine.FindFirst() then exit;
 
         _salesLine.TestField("No.");
@@ -320,16 +316,6 @@ codeunit 50006 "IC Extended"
         _selectionTxt: Text;
         _assignItemChargeSales: Codeunit "Item Charge Assgnt. (Sales)";
     begin
-        // with _salesLine do begin
-        //     TestField("Qty. to Invoice");
-        //     _itemChargeAssgntSales.SetRange("Document Type", "Document Type");
-        //     _itemChargeAssgntSales.SetRange("Document No.", "Document No.");
-        //     _itemChargeAssgntSales.SetRange("Document Line No.", "Line No.");
-        // END;
-        // IF _itemChargeAssgntSales.IsEmpty THEN
-        //     EXIT;
-
-
         _selection := 1;
         _suggestItemChargeMenuTxt :=
           STRSUBSTNO('%1,%2,%3,%4', AssignEquallyMenuText, AssignByAmountMenuText, AssignByWeightMenuText, AssignByVolumeMenuText);
@@ -361,20 +347,16 @@ codeunit 50006 "IC Extended"
         exit(ByVolumeTok)
     end;
 
-    procedure CreateDeliverySalesLine(_salesHeaderNo: Code[20]; _customerNo: Code[20])
+    procedure CreateDeliverySalesLine(_salesHeaderNo: Code[20])
     var
         _salesHeader: Record "Sales Header";
         _salesLine: Record "Sales Line";
         _salesLineLast: Record "Sales Line";
-        _customer: Record Customer;
         LineNo: Integer;
         UpdatedStatus: Boolean;
     begin
-        if (not _customer.Get(_customerNo))
-            or (_customer."Sales No. Shipment Cost" = '')
-            or (not _salesHeader.Get(_salesHeader."Document Type"::Order, _salesHeaderNo))
-            or (_salesHeader."ShipStation Shipment Amount" = 0) then
-            exit;
+        GetShipStationSetup();
+        _salesHeader.Get(_salesHeader."Document Type"::Order, _salesHeaderNo);
 
         _salesLineLast.SetRange("Document Type", _salesLineLast."Document Type"::Order);
         _salesLineLast.SetRange("Document No.", _salesHeaderNo);
@@ -394,8 +376,10 @@ codeunit 50006 "IC Extended"
         _salesLine."Document No." := _salesHeaderNo;
         _salesLine."Line No." := LineNo;
         _salesLine.Insert(true);
-        _salesLine.Validate(Type, _customer."Posting Type Shipment Cost");
-        _salesLine.Validate("No.", _customer."Sales No. Shipment Cost");
+        // _salesLine.Validate(Type, _customer."Posting Type Shipment Cost");
+        // _salesLine.Validate("No.", _customer."Sales No. Shipment Cost");
+        _salesLine.Validate(Type, glShipStationSetup."Posting Type Shipment Cost");
+        _salesLine.Validate("No.", glShipStationSetup."Sales No. Shipment Cost");
         _salesLine.Validate(Quantity, 1);
         _salesLine.Validate("Unit Price", _salesHeader."ShipStation Shipment Amount");
         _salesLine.Modify(true);
@@ -527,7 +511,10 @@ codeunit 50006 "IC Extended"
     local procedure GetShipStationSetup()
     begin
         if not glShipStationSetupGetted then begin
-            glShipStationSetup.Get();
+            if not glShipStationSetup.Get() then begin
+                glShipStationSetup.Init();
+                glShipStationSetup.Insert();
+            end;
             glShipStationSetupGetted := true;
         end;
     end;

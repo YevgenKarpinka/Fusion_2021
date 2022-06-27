@@ -16,14 +16,42 @@ page 50017 "ShipStation Setup"
             {
                 field("ShipStation Integration Enable"; Rec."ShipStation Integration Enable")
                 {
+                    ToolTip = 'Specifies the value of the ShipStation Integration Enable field.';
                     ApplicationArea = All;
                 }
                 field("Order Status Update"; Rec."Order Status Update")
                 {
+                    ToolTip = 'Specifies the value of the Order Status Update field.';
                     ApplicationArea = All;
                 }
                 field("Show Error"; Rec."Show Error")
                 {
+                    ToolTip = 'Specifies the value of the Show Error field.';
+                    ApplicationArea = All;
+                }
+                field("Insert Item Charge On Release"; Rec."Insert Item Charge On Release")
+                {
+                    ToolTip = 'Specifies the value of the Insert Item Charge On Release field.';
+                    ApplicationArea = All;
+                }
+                field("Posting Type Shipment Cost"; Rec."Posting Type Shipment Cost")
+                {
+                    ToolTip = 'Specifies the value of the Posting Type Shipment Cost field.';
+                    ApplicationArea = All;
+                }
+                field("Sales No. Shipment Cost"; Rec."Sales No. Shipment Cost")
+                {
+                    ToolTip = 'Specifies the value of the Sales No. Shipment Cost field.';
+                    ApplicationArea = All;
+                }
+                field("Insert State TAX On Release"; Rec."Insert State TAX On Release")
+                {
+                    ToolTip = 'Specifies the value of the Insert State TAX On Release field.';
+                    ApplicationArea = All;
+                }
+                field("G/L Account State TAX"; Rec."G/L Account State TAX")
+                {
+                    ToolTip = 'Specifies the value of the G/L Account State TAX field.';
                     ApplicationArea = All;
                 }
             }
@@ -31,6 +59,7 @@ page 50017 "ShipStation Setup"
             {
                 field("CRM Integration Enable"; Rec."CRM Integration Enable")
                 {
+                    ToolTip = 'Specifies the value of the CRM Integration Enable field.';
                     ApplicationArea = All;
                 }
             }
@@ -62,7 +91,7 @@ page 50017 "ShipStation Setup"
             Rec.Init();
             Rec.Insert();
         end;
-        isEditable := Rec."ShipStation Integration Enable";
+        isEditable := Rec."ShipStation Integration Enable" in [Rec."ShipStation Integration Enable"::"Sales Order", Rec."ShipStation Integration Enable"::Package];
     end;
 
     var

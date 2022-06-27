@@ -9,13 +9,13 @@
             // "environmentName": "Test",
             "environmentName": "Debug",
             // "environmentName": "copyProd",
-            "startupObjectId": 9305,
+            "startupObjectId": 31,
             "startupObjectType": "Page",
             "breakOnError": true,
             "launchBrowser": true,
             "enableLongRunningSqlStatements": true,
             "enableSqlInformationDebugger": true,
-            "schemaUpdateMode": "Synchronize"
+            "schemaUpdateMode": "ForceSync"
         }
     ]
 }

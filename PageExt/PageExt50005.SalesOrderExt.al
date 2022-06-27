@@ -121,6 +121,12 @@ pageextension 50005 "Sales Order Ext." extends "Sales Order"
                     Importance = Additional;
                     Visible = false;
                 }
+                field("State TAX Amount"; Rec."State TAX Amount")
+                {
+                    ApplicationArea = All;
+                    Importance = Additional;
+                    Visible = false;
+                }
             }
         }
     }
@@ -203,9 +209,9 @@ pageextension 50005 "Sales Order Ext." extends "Sales Order"
                     begin
                         CurrPage.SetSelectionFilter(_SH);
                         if _SH.FindSet(false, false) then
-                            repeat
-                                ShipStationMgt.CreateOrderInShipStation(_SH."No.");
-                            until _SH.Next() = 0;
+                                repeat
+                                    ShipStationMgt.CreateOrderInShipStation(_SH."No.");
+                                until _SH.Next() = 0;
                         Message(lblOrderCreated);
                     end;
                 }
@@ -254,7 +260,7 @@ pageextension 50005 "Sales Order Ext." extends "Sales Order"
                         CurrPage.SetSelectionFilter(_SH);
                         if _SH.FindSet(false, false) then
                             repeat
-                                ShipStationMgt.CreateLabel2OrderInShipStation(_SH."No.");
+                                    ShipStationMgt.CreateLabel2OrderInShipStation(_SH."No.");
                             until _SH.Next() = 0;
                         Message(lblLabelCreated);
                     end;
@@ -276,9 +282,9 @@ pageextension 50005 "Sales Order Ext." extends "Sales Order"
                     begin
                         CurrPage.SetSelectionFilter(_SH);
                         if _SH.FindSet(false, false) then
-                            repeat
-                                ShipStationMgt.VoidLabel2OrderInShipStation(_SH."No.");
-                            until _SH.Next() = 0;
+                                repeat
+                                    ShipStationMgt.VoidLabel2OrderInShipStation(_SH."No.");
+                                until _SH.Next() = 0;
                         Message(lblLabelVoided);
                     end;
                 }
